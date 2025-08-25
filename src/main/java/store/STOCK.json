@@ -1,0 +1,1 @@
+{"columnNames":["ID","EVENTTIME","SYMBOL","PRICE","VOLUME"],"dataLengths":[4,8,4,4,4],"dataTypes":["INT","LONG","INT","INT","INT"],"fixedRecordLen":24,"tableName":"STOCK"}

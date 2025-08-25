@@ -1,0 +1,600 @@
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_01' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_13' AND C.A1 <= 200,
+        D AS D.type = 'T_18' AND D.A1 <= 200 AND D.A2 = C.A2
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_19' AND B.A1 <= 200,
+        C AS C.type = 'T_11' AND C.A1 <= 200,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_17' AND B.A1 <= 200,
+        C AS C.type = 'T_14' AND C.A1 <= 200,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_01' AND A.A1 <= 200,
+        B AS B.type = 'T_19' AND B.A1 <= 200,
+        C AS C.type = 'T_09' AND C.A1 <= 200 AND C.A3 = B.A3,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_16' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200 AND B.A2 = A.A2,
+        C AS C.type = 'T_18' AND C.A1 <= 200,
+        D AS D.type = 'T_10' AND D.A1 <= 200 AND D.A2 = C.A2
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_16' AND B.A1 <= 200,
+        C AS C.type = 'T_13' AND C.A1 <= 200,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_16' AND A.A1 <= 200,
+        B AS B.type = 'T_01' AND B.A1 <= 200,
+        C AS C.type = 'T_03' AND C.A1 <= 200,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_10' AND A.A1 <= 200,
+        B AS B.type = 'T_12' AND B.A1 <= 200,
+        C AS C.type = 'T_14' AND C.A1 <= 200 AND C.A2 = B.A2,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_15' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_17' AND C.A1 <= 200,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_18' AND A.A1 <= 200,
+        B AS B.type = 'T_01' AND B.A1 <= 200,
+        C AS C.type = 'T_05' AND C.A1 <= 200,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_16' AND A.A1 <= 200,
+        B AS B.type = 'T_01' AND B.A1 <= 200,
+        C AS C.type = 'T_17' AND C.A1 <= 200,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_08' AND A.A1 <= 200,
+        B AS B.type = 'T_16' AND B.A1 <= 200,
+        C AS C.type = 'T_01' AND C.A1 <= 200,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_18' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_17' AND C.A1 <= 200,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_02' AND A.A1 <= 200,
+        B AS B.type = 'T_18' AND B.A1 <= 200 AND B.A2 = A.A2,
+        C AS C.type = 'T_06' AND C.A1 <= 200,
+        D AS D.type = 'T_13' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_01' AND A.A1 <= 200,
+        B AS B.type = 'T_12' AND B.A1 <= 200,
+        C AS C.type = 'T_13' AND C.A1 <= 200 AND C.A2 = B.A2,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_06' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200 AND B.A2 = A.A2,
+        C AS C.type = 'T_11' AND C.A1 <= 200 AND C.A3 = B.A3,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_03' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_05' AND C.A1 <= 200,
+        D AS D.type = 'T_15' AND D.A1 <= 200 AND D.A2 = C.A2
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_17' AND A.A1 <= 200,
+        B AS B.type = 'T_15' AND B.A1 <= 200 AND B.A3 = A.A3,
+        C AS C.type = 'T_17' AND C.A1 <= 200,
+        D AS D.type = 'T_03' AND D.A1 <= 200 AND D.A2 = C.A2
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_01' AND B.A1 <= 200,
+        C AS C.type = 'T_13' AND C.A1 <= 200,
+        D AS D.type = 'T_14' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_11' AND A.A1 <= 200,
+        B AS B.type = 'T_09' AND B.A1 <= 200,
+        C AS C.type = 'T_19' AND C.A1 <= 200 AND C.A3 = B.A3,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_19' AND A.A1 <= 200,
+        B AS B.type = 'T_01' AND B.A1 <= 200,
+        C AS C.type = 'T_00' AND C.A1 <= 200,
+        D AS D.type = 'T_14' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_01' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_05' AND C.A1 <= 200,
+        D AS D.type = 'T_14' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_10' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_19' AND C.A1 <= 200,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_14' AND B.A1 <= 200,
+        C AS C.type = 'T_13' AND C.A1 <= 200 AND C.A3 = B.A3,
+        D AS D.type = 'T_16' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_13' AND B.A1 <= 200,
+        C AS C.type = 'T_05' AND C.A1 <= 200 AND C.A3 = B.A3,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_13' AND A.A1 <= 200,
+        B AS B.type = 'T_18' AND B.A1 <= 200,
+        C AS C.type = 'T_00' AND C.A1 <= 200,
+        D AS D.type = 'T_02' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_01' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_07' AND C.A1 <= 200,
+        D AS D.type = 'T_12' AND D.A1 <= 200 AND D.A2 = C.A2
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_08' AND B.A1 <= 200,
+        C AS C.type = 'T_01' AND C.A1 <= 200,
+        D AS D.type = 'T_14' AND D.A1 <= 200 AND D.A2 = C.A2
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_19' AND A.A1 <= 200,
+        B AS B.type = 'T_12' AND B.A1 <= 200,
+        C AS C.type = 'T_19' AND C.A1 <= 200 AND C.A3 = B.A3,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_01' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_16' AND C.A1 <= 200,
+        D AS D.type = 'T_10' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_17' AND A.A1 <= 200,
+        B AS B.type = 'T_03' AND B.A1 <= 200 AND B.A2 = A.A2,
+        C AS C.type = 'T_00' AND C.A1 <= 200,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_16' AND A.A1 <= 200,
+        B AS B.type = 'T_09' AND B.A1 <= 200,
+        C AS C.type = 'T_00' AND C.A1 <= 200,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_18' AND A.A1 <= 200,
+        B AS B.type = 'T_07' AND B.A1 <= 200 AND B.A3 = A.A3,
+        C AS C.type = 'T_01' AND C.A1 <= 200,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_14' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_01' AND C.A1 <= 200,
+        D AS D.type = 'T_13' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_13' AND A.A1 <= 200,
+        B AS B.type = 'T_05' AND B.A1 <= 200 AND B.A2 = A.A2,
+        C AS C.type = 'T_18' AND C.A1 <= 200,
+        D AS D.type = 'T_08' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_03' AND B.A1 <= 200,
+        C AS C.type = 'T_10' AND C.A1 <= 200 AND C.A2 = B.A2,
+        D AS D.type = 'T_06' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_18' AND A.A1 <= 200,
+        B AS B.type = 'T_07' AND B.A1 <= 200,
+        C AS C.type = 'T_02' AND C.A1 <= 200 AND C.A3 = B.A3,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_07' AND B.A1 <= 200,
+        C AS C.type = 'T_06' AND C.A1 <= 200 AND C.A2 = B.A2,
+        D AS D.type = 'T_18' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_18' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_00' AND C.A1 <= 200,
+        D AS D.type = 'T_06' AND D.A1 <= 200 AND D.A2 = C.A2
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_12' AND A.A1 <= 200,
+        B AS B.type = 'T_08' AND B.A1 <= 200 AND B.A3 = A.A3,
+        C AS C.type = 'T_05' AND C.A1 <= 200,
+        D AS D.type = 'T_01' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_08' AND A.A1 <= 200,
+        B AS B.type = 'T_01' AND B.A1 <= 200 AND B.A3 = A.A3,
+        C AS C.type = 'T_00' AND C.A1 <= 200,
+        D AS D.type = 'T_17' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_01' AND B.A1 <= 200,
+        C AS C.type = 'T_10' AND C.A1 <= 200,
+        D AS D.type = 'T_14' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_19' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_07' AND C.A1 <= 200,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_01' AND B.A1 <= 200,
+        C AS C.type = 'T_13' AND C.A1 <= 200,
+        D AS D.type = 'T_18' AND D.A1 <= 200 AND D.A2 = C.A2
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_17' AND A.A1 <= 200,
+        B AS B.type = 'T_19' AND B.A1 <= 200 AND B.A2 = A.A2,
+        C AS C.type = 'T_02' AND C.A1 <= 200,
+        D AS D.type = 'T_15' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_06' AND B.A1 <= 200,
+        C AS C.type = 'T_09' AND C.A1 <= 200 AND C.A2 = B.A2,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_01' AND A.A1 <= 200,
+        B AS B.type = 'T_00' AND B.A1 <= 200,
+        C AS C.type = 'T_08' AND C.A1 <= 200,
+        D AS D.type = 'T_16' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_01' AND A.A1 <= 200,
+        B AS B.type = 'T_13' AND B.A1 <= 200,
+        C AS C.type = 'T_18' AND C.A1 <= 200,
+        D AS D.type = 'T_00' AND D.A1 <= 200
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_00' AND A.A1 <= 200,
+        B AS B.type = 'T_03' AND B.A1 <= 200,
+        C AS C.type = 'T_12' AND C.A1 <= 200,
+        D AS D.type = 'T_02' AND D.A1 <= 200 AND D.A3 = C.A3
+);
+SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime as CTS, D.eventTime as DTS
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN(A N1*? B N2*? C N3*? D) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'T_10' AND A.A1 <= 200,
+        B AS B.type = 'T_16' AND B.A1 <= 200,
+        C AS C.type = 'T_02' AND C.A1 <= 200,
+        D AS D.type = 'T_01' AND D.A1 <= 200
+);

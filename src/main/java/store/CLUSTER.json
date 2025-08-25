@@ -1,0 +1,1 @@
+{"columnNames":["TYPE","JOBID","INDEX","SCHEDULING","PRIORITY","CPU","RAM","DISK","EVENTTIME"],"dataLengths":[3,8,4,1,4,4,4,4,8],"dataTypes":["VARCHAR","LONG","INT","VARCHAR","INT","FLOAT","FLOAT","FLOAT","LONG"],"fixedRecordLen":40,"tableName":"CLUSTER"}

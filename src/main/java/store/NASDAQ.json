@@ -1,0 +1,1 @@
+{"columnNames":["TICKER","PRICE","VOLUME","EVENTTIME"],"dataLengths":[8,4,4,8],"dataTypes":["VARCHAR","FLOAT","INT","LONG"],"fixedRecordLen":24,"tableName":"NASDAQ"}

@@ -1,0 +1,1 @@
+{"columnNames":["TYPE","RIDE_ID","START_STATION_ID","END_STATION_ID","START_LAT","START_LNG","END_LAT","END_LNG","EVENTTIME"],"dataLengths":[1,8,4,4,8,8,8,8,8],"dataTypes":["VARCHAR","LONG","INT","INT","DOUBLE","DOUBLE","DOUBLE","DOUBLE","LONG"],"fixedRecordLen":57,"tableName":"CITIBIKE"}
