@@ -43,7 +43,7 @@ String[] storageNodeIps = {"localhost", "your_ip_address"};
 int[] ports = {9090, 9090};
 ```
 
-## Program description
+## Program Description
 
 ### Package
 | Name    | Explanation                                                                    |
@@ -111,7 +111,7 @@ WITHIN 1000
 
 We use three real-world datasets, their details are as follow:
 
-Please run our python code *e.g.*, [clean-crimes](./src/main/python/data_clean_crimes.py) to clean the original datasets.
+Please run our python code *e.g.*, [data_clean_crimes.py](src/main/dataset/data_clean_crimes.py) to clean the original datasets.
 
 | Dataset name                                                                             | Event number | Size of single event |
 |------------------------------------------------------------------------------------------|--------------|----------------------|
@@ -120,8 +120,8 @@ Please run our python code *e.g.*, [clean-crimes](./src/main/python/data_clean_c
 | [Cluster](https://github.com/google/cluster-data)                                        | 143,822,998  | 40                   |
 
 
-We also provide [synthetic_events.py](src%2Fmain%2Fpython%2Fsynthetic_events.py) to produce synthetic datasets.
+We also provide [generate_synthetic_dataset.py](src/main/dataset/generate_synthetic_dataset.py) to produce synthetic datasets.
 
 ## Future work
 - Support multiple thread for insertion, lookup, and filtering
-- Accelerate CER in memory disaggregated architecture
+- Accelerate CER in memory disaggregated environments
