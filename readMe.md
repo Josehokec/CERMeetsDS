@@ -1,15 +1,22 @@
 
-# When Complex Event Recognition Meets Disaggregated Storage
+# When Complex Event Recognition Meets Cloud-Native Architectures
+
+## Background
+
+Complex Event Recognition (CER) aims to detect a predefined pattern composed of multiple primitive events.
 
 
-Complex Event Recognition, abbreviated as CER
+Cloud-native architectures aim to decouple and pool computing and storage resources, enabling independent scaling. 
+Since it offers elasticity, availability, and cost efficiency, many database vendors are migrating their products to cloud-native architectures.
+We highlight that cloud-native technology is a major trend in data storage and querying.
 
-Disaggregated Storage, abbreviated as DS
 
+When CER is implemented on cloud-native architectures, the network often becomes a performance bottleneck. 
+Thus, in this paper, we address the following question: 
+**how can we design an efficient pulling strategy to retrieve events from multiple storage nodes, so that compute nodes can minimize query latency for CER?**
 
 ## Insight
-According to prior research work, when disaggregating compute and storage resources, network becomes bottleneck.
-Thus, when processing CER queries, our key insight is to minimize the network overhead during compute node pulls events from storage nodes.
+When processing CER queries, our key insight is to minimize the network overhead during compute node pulls events from storage nodes.
 Low network overhead can be achieved by transmitting as few events as possible, i.e.,
 identifying the shortest time intervals that contain matches and transmit only events within those intervals.
 
@@ -19,15 +26,7 @@ it would have a high communication cost or computational cost to obtain such tim
 To circumvent such issues, we propose a dual-filtering strategy that leverages both temporal and predicate constraints to incrementally shrink the intervals.
 Besides, we propose shrinking window filter and window-wise bloom filter to assist identifying the shorter time intervals.
 
-
-Note that we use [thrift](https://thrift.apache.org/) to build a distributed storage. The reasons why not use `Amazon S3` as storage are as follows:
-
-- S3 only provides simple independent predicate granularity filtering using `S3 Select`
-  (*e.g.,* select * from table where table.attribute < 10),
-  this paper addresses additionally using the window condition and dependent condition to filter more data.
-
-- We adopt multiple rounds of communication to filter out irrelevant events. However, **S3 is stateless**,
-  so it cannot cache previous results.
+Note that we use [thrift](https://thrift.apache.org/) to implement node communication.
 
 
 ## Running
@@ -43,26 +42,53 @@ String[] storageNodeIps = {"localhost", "your_ip_address"};
 int[] ports = {9090, 9090};
 ```
 
-## Program description
+## Program Description
 
 ### Package
-| Name    | Explanation                                                                    |
-|---------|--------------------------------------------------------------------------------|
-| compute | Some approaches running on compute nodes                                       |
-| engine  | SASE-E engine (optimized [SASE](https://github.com/haopeng/sase))              |
+| Name    | Explanation                                                                  |
+|---------|------------------------------------------------------------------------------|
+| compute | Some approaches running on compute nodes                                     |
+| engine  | SASE-E engine (optimized [SASE](https://github.com/haopeng/sase))            |
 | event   | Event classes used by Flink and Esper, please note that Sase does not use them |
-| filter  | Shrinking window filter and window-wise join filter                            |
-| hasher  | Hash functions                                                                 |
-| parser  | query parser for complex event query                                           |
-| plan    | Variable processing order + Cost Model                                         |
-| request | SQL queries that contain match_recognize keywords                              |
-| rpc     | Remote procedure call service                                                  |
-| store   | Store event into a byte file (row-format)                                      |
-| utils   | Frequently used classes, e.g., ReplayIntervals                                 |
+| filter  | Shrinking window filter and window-wise join filter                          |
+| hasher  | Hash functions                                                               |
+| parser  | query parser for complex event query                                         |
+| plan    | Variable processing order + Cost Model                                       |
+| request | SQL queries that contain match_recognize keywords                            |
+| rpc     | Remote procedure call service                                                |
+| store   | Store event into a byte file (row-format)                                    |
+| utils   | Frequently used classes, e.g., ReplayIntervals                               |
 
-### Clarification
+```sql
+-- query example (FlinkSQL supports 'within' keywords)
+-- since N1 and N2 are not contributing to the query results (i.e., matches)
+-- we can use a pushdown strategy to pull events that hold independent conditions
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'B' 
+            AND A.start_lat >= 40.75123 
+            AND A.start_lat <= 40.774903,
+        B AS B.type = 'H' 
+            AND B.start_station_id = A.end_station_id 
+            AND B.start_lat >= 40.75123 
+            AND B.start_lat <= 40.774903,
+        C AS C.type = 'K' 
+            AND C.start_station_id = B.end_station_id 
+            AND C.start_lat >= 40.75123 
+            AND C.start_lat <= 40.774903 
+            AND C.start_lat <= B.start_lat 
+            AND C.start_lng <= B.start_lng
+);
+```
 
-We want to highlight that we have elaborately optimized SASE rather than adopting it unchanged.
+### Performance comparison: SASE-E vs. SASE
+
+We have elaborately optimized SASE rather than adopting it unchanged.
 The implementation details can be found in package engine.
 The core idea is to (1) reduce the copying of events through pointer references when generating matches; 
 and (2) timely remove intermediate results that cannot form a final match.
@@ -111,7 +137,7 @@ WITHIN 1000
 
 We use three real-world datasets, their details are as follow:
 
-Please run our python code *e.g.*, [clean-crimes](./src/main/python/data_clean_crimes.py) to clean the original datasets.
+Please run our python code *e.g.*, [data_clean_crimes.py](src/main/dataset/data_clean_crimes.py) to clean the original datasets.
 
 | Dataset name                                                                             | Event number | Size of single event |
 |------------------------------------------------------------------------------------------|--------------|----------------------|
@@ -120,8 +146,8 @@ Please run our python code *e.g.*, [clean-crimes](./src/main/python/data_clean_c
 | [Cluster](https://github.com/google/cluster-data)                                        | 143,822,998  | 40                   |
 
 
-We also provide [synthetic_events.py](src%2Fmain%2Fpython%2Fsynthetic_events.py) to produce synthetic datasets.
+We also provide [generate_synthetic_dataset.py](src/main/dataset/generate_synthetic_dataset.py) to produce synthetic datasets.
 
 ## Future work
 - Support multiple thread for insertion, lookup, and filtering
-- Accelerate CER in memory disaggregated architecture
+- Accelerate CER in memory disaggregated environments
