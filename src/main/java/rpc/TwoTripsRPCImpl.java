@@ -108,6 +108,10 @@ public class TwoTripsRPCImpl implements TwoTripsRPC.Iface {
             cache = null;
             chunkId = 0;
 
+            if(filteredRecords == null || filteredRecords.isEmpty()){
+                return new DataChunk(-1, ByteBuffer.allocate(0), true);
+            }
+
             recordSize = filteredRecords.get(0).length;
             MAX_RECORD_NUM = Args.MAX_CHUNK_SIZE / recordSize;
         }

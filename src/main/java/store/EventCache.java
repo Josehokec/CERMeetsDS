@@ -3,6 +3,7 @@ package store;
 
 import filter.*;
 import parser.EqualDependentPredicate;
+import rpc.NaiveFilterBasedRPCImpl;
 import rpc.iface.TsAttrPair;
 import utils.Pair;
 import utils.ReplayIntervals;
@@ -18,8 +19,6 @@ import java.util.*;
  */
 public class EventCache {
     private final EventSchema schema;
-    // private int cacheRecordNum;
-    // private final int EQUAL_DIVISION = 20;
     List<byte[]> records;
     Map<String, List<Integer>> varPointers;
 
@@ -28,6 +27,10 @@ public class EventCache {
         //this.cacheRecordNum = cacheRecordNum;
         this.records = records;
         this.varPointers = varPointers;
+    }
+
+    public EventSchema getSchema(){
+        return schema;
     }
 
     // this function is used by push-pull method
@@ -150,12 +153,19 @@ public class EventCache {
         long leftOffset = (headTailMarker == 0) ? 0 : -window;
         long rightOffset = (headTailMarker == 1) ? 0 : window;
 
-        for(Integer pointer : pointers){
-            byte[] record = records.get(pointer);
-            long ts = schema.getTimestamp(record);
-            intervals.insert(ts + leftOffset, ts + rightOffset);
+        if(NaiveFilterBasedRPCImpl.enableInOrderInsert){
+            for(Integer pointer : pointers){
+                byte[] record = records.get(pointer);
+                long ts = schema.getTimestamp(record);
+                intervals.insertInOrder(ts + leftOffset, ts + rightOffset);
+            }
+        }else{
+            for(Integer pointer : pointers){
+                byte[] record = records.get(pointer);
+                long ts = schema.getTimestamp(record);
+                intervals.insert(ts + leftOffset, ts + rightOffset);
+            }
         }
-
         return intervals.serialize();
     }
 
@@ -169,6 +179,20 @@ public class EventCache {
             // to accelerate bf generation, we do not consider the case that X.A=Y.A+1
             Object obj = schema.getColumnValue(attrName, record);
             ans.add(new TsAttrPair(timestamp, obj.toString()));
+        }
+        return ans;
+    }
+
+    public Set<rpc2.iface.TsAttrPair> getTsAttrPairSet2(String varName, String attrName){
+        List<Integer> pointers = varPointers.get(varName);
+        Set<rpc2.iface.TsAttrPair> ans = new HashSet<>(pointers.size() << 1);
+        // in fact, if existing multiple equal predicate condition, we can combine two attributes
+        for(Integer pointer : pointers) {
+            byte[] record = records.get(pointer);
+            long timestamp = schema.getTimestamp(record);
+            // to accelerate bf generation, we do not consider the case that X.A=Y.A+1
+            Object obj = schema.getColumnValue(attrName, record);
+            ans.add(new rpc2.iface.TsAttrPair(timestamp, obj.toString()));
         }
         return ans;
     }
@@ -192,6 +216,25 @@ public class EventCache {
         return bf.serialize();
     }
 
+    public Map<Long, Set<String>> generatePairSet(String varName, long window, List<EqualDependentPredicate> dps){
+        Map<Long, Set<String>> pairSet = new HashMap<>();
+
+        List<Integer> pointers = varPointers.get(varName);
+
+        // in fact, if existing multiple equal predicate condition, we can combine two attributes
+        EqualDependentPredicate firstEDP = dps.get(0);
+        for(Integer pointer : pointers){
+            byte[] record = records.get(pointer);
+            long timestamp = schema.getTimestamp(record);
+            // to accelerate bf generation, we do not consider the case that X.A=Y.A+1
+            String attrName = firstEDP.getAttrName(varName);
+            String attrValue = schema.getColumnValue(attrName, record).toString();
+
+            pairSet.computeIfAbsent(timestamp / window, k -> new HashSet<>()).add(attrValue);
+        }
+        return pairSet;
+    }
+
     public void simpleFilter(String varName, long window, SWF swf){
         List<Integer> pointers = varPointers.get(varName);
         List<Integer> updatedPointers = new ArrayList<>(pointers.size());
@@ -202,7 +245,7 @@ public class EventCache {
                 updatedPointers.add(pointer);
             }
         }
-        System.out.println("join preparation, [" + varName + "] original size: " + pointers.size() + " -> updated size:" + updatedPointers.size());//debug
+        // System.out.println("join preparation, [" + varName + "] original size: " + pointers.size() + " -> updated size:" + updatedPointers.size());//debug
         varPointers.put(varName, updatedPointers);
     }
 
@@ -216,7 +259,21 @@ public class EventCache {
                 updatedPointers.add(pointer);
             }
         }
-        System.out.println("join preparation, [" + varName + "] original size: " + pointers.size() + " -> updated size:" + updatedPointers.size());//debug
+        // System.out.println("join preparation, [" + varName + "] original size: " + pointers.size() + " -> updated size:" + updatedPointers.size());//debug
+        varPointers.put(varName, updatedPointers);
+    }
+
+    public void simpleFilter(String varName, ReplayIntervals intervals){
+        List<Integer> pointers = varPointers.get(varName);
+        List<Integer> updatedPointers = new ArrayList<>(pointers.size() >> 1);
+        for(int pointer : pointers) {
+            byte[] record = records.get(pointer);
+            long ts = schema.getTimestamp(record);
+            if(intervals.contains(ts)){
+                updatedPointers.add(pointer);
+            }
+        }
+        // System.out.println("join preparation, [" + varName + "] original size: " + pointers.size() + " -> updated size:" + updatedPointers.size());//debug
         varPointers.put(varName, updatedPointers);
     }
 
@@ -237,6 +294,8 @@ public class EventCache {
             if(optimizedSWF.query(ts, window)){
                 updatedPointers.add(pointer);
                 updateShrinkFilter(ts + leftOffset, ts + rightOffset, window, optimizedSWF, updatedMarkers);
+            }else{
+                records.set(pointer, null);
             }
         }
 
@@ -263,6 +322,31 @@ public class EventCache {
 
         varPointers.put(varName, updatedPointers);
         return swf.serialize();
+    }
+
+    public ByteBuffer updatePointers2(String varName, long window, int headTailMarker, ReplayIntervals intervals){
+        // headTailMarker only has three cases: 0 (leftmost), 1  (rightmost), 2 (middle)
+        long leftOffset = (headTailMarker == 0) ? 0 : -window;
+        long rightOffset = (headTailMarker == 1) ? 0 : window;
+
+        ReplayIntervals updatedIntervals = new ReplayIntervals();
+
+        List<Integer> pointers = varPointers.get(varName);
+        List<Integer> updatedPointers = new ArrayList<>(pointers.size());
+
+        for(int pointer : pointers) {
+            byte[] record = records.get(pointer);
+            long ts = schema.getTimestamp(record);
+            if(intervals.contains(ts)){
+                updatedIntervals.insertInOrder(ts + leftOffset, ts + rightOffset);
+                updatedPointers.add(pointer);
+            }
+        }
+
+        varPointers.put(varName, updatedPointers);
+        updatedIntervals.intersect(intervals);
+
+        return updatedIntervals.serialize();
     }
 
     // used for UpdatedMarkers
@@ -340,7 +424,7 @@ public class EventCache {
             }
         }
 
-        System.out.println("varName: " + varName + " original number of events:" + cnt + " -> filteredEventNum: " + updatedPointers.size());
+        // System.out.println("varName: " + varName + " original number of events:" + cnt + " -> filteredEventNum: " + updatedPointers.size());
 
         varPointers.put(varName, updatedPointers);
         return updatedMarkers.serialize();
@@ -400,6 +484,184 @@ public class EventCache {
         System.out.println("varName: " + varName + " original number of events:" + cnt + " -> filteredEventNum: " + updatedPointers.size());
         varPointers.put(varName, updatedPointers);
         return swf.serialize();
+    }
+
+    public ByteBuffer updatePointers3(String varName, long window, int headTailMarker, OptimizedSWF swf, Map<String, Boolean> previousOrNext,
+                                      Map<String, Map<Long, Set<String>>> pairs, Map<String, List<EqualDependentPredicate>> dependentPredicateMap){
+        // headTailMarker only has three cases: 0 (leftmost), 1  (rightmost), 2 (middle)
+        long leftOffset = (headTailMarker == 0) ? 0 : -window;
+        long rightOffset = (headTailMarker == 1) ? 0 : window;
+        UpdatedMarkers updatedMarkers = new UpdatedMarkers(swf.getBucketNum());
+        List<Integer> pointers = varPointers.get(varName);
+        List<Integer> updatedPointers = new ArrayList<>(pointers.size());
+
+        int cnt = 0;
+        for(int pointer : pointers){
+            byte[] record = records.get(pointer);
+            long ts = schema.getTimestamp(record);
+            if(swf.query(ts, window)){
+                cnt++;
+                // check all related dependent predicates
+                // for example, varName: c, previousVariables: a, b
+                // dependent predicates: a.A1 = c.A1 + 5 AND b.A2 * 2 = c.A2
+                boolean satisfied = true;
+                for(String preVarName : previousOrNext.keySet()){
+                    List<EqualDependentPredicate> dps = dependentPredicateMap.get(preVarName);
+
+                    Map<Long, Set<String>> pairSet = pairs.get(preVarName);
+                    EqualDependentPredicate firstEDP = dps.get(0);
+                    String attrName = firstEDP.getAttrName(varName);
+                    String attrValue = schema.getColumnValue(attrName, record).toString();
+
+                    // false: previous, true: next
+                    boolean next = previousOrNext.get(preVarName);
+                    if(next){
+
+                        boolean curWindowContains = pairSet.containsKey(ts / window) && pairSet.get(ts / window).contains(attrValue);
+                        boolean nextWindowContains = pairSet.containsKey(ts / window + 1) && pairSet.get(ts / window + 1).contains(attrValue);
+                        if(!curWindowContains && !nextWindowContains) {
+                            satisfied = false;
+                            break;
+                        }
+                    }else{
+                        boolean curWindowContains = pairSet.containsKey(ts / window) && pairSet.get(ts / window).contains(attrValue);
+                        boolean prevWindowContains = pairSet.containsKey(ts / window - 1) && pairSet.get(ts / window - 1).contains(attrValue);
+                        if(!curWindowContains && !prevWindowContains){
+                            satisfied = false;
+                            break;
+                        }
+                    }
+                }
+                // if satisfy window condition and join condition
+                if(satisfied){
+                    updatedPointers.add(pointer);
+                    updateShrinkFilter(ts + leftOffset, ts + rightOffset, window, swf, updatedMarkers);
+                }
+            }
+        }
+
+        System.out.println("varName: " + varName + " original number of events:" + cnt + " -> filteredEventNum: " + updatedPointers.size());
+
+        varPointers.put(varName, updatedPointers);
+        return updatedMarkers.serialize();
+    }
+
+    public ByteBuffer updatePointers4(String varName, long window, int headTailMarker, ReplayIntervals replayIntervals, Map<String, Boolean> previousOrNext,
+                                      Map<String, BasicBF> bfMap, Map<String, List<EqualDependentPredicate>> dependentPredicateMap) {
+        long leftOffset = (headTailMarker == 0) ? 0 : -window;
+        long rightOffset = (headTailMarker == 1) ? 0 : window;
+        List<Integer> pointers = varPointers.get(varName);
+
+        List<Integer> updatedPointers = new ArrayList<>(pointers.size());
+        ReplayIntervals updatedInterval = new ReplayIntervals();
+        int cnt = 0;
+        for(int pointer : pointers){
+            byte[] record = records.get(pointer);
+            long ts = schema.getTimestamp(record);
+
+            if(replayIntervals.contains(ts)){
+                cnt++;
+                // check all related dependent predicates
+                // for example, varName: c, previousVariables: a, b
+                // dependent predicates: a.A1 = c.A1 + 5 AND b.A2 * 2 = c.A2
+                boolean satisfied = true;
+                for(String preVarName : previousOrNext.keySet()){
+                    List<EqualDependentPredicate> dps = dependentPredicateMap.get(preVarName);
+                    BasicBF lbf = bfMap.get(preVarName);
+                    EqualDependentPredicate firstEDP = dps.get(0);
+                    String attrName = firstEDP.getAttrName(varName);
+                    Object obj = schema.getColumnValue(attrName, record);
+                    String key = obj.toString();
+
+                    // false: previous, true: next
+                    boolean next = previousOrNext.get(preVarName);
+                    if(next){
+                        if(!lbf.contain(key, ts / window) && !lbf.contain(key, ts / window + 1)){
+                            satisfied = false;
+                            break;
+                        }
+                    }else{
+                        if(!lbf.contain(key, ts/ window) && !lbf.contain(key, ts/ window - 1)){
+                            satisfied = false;
+                            break;
+                        }
+                    }
+                }
+
+                // if satisfy window condition and join condition
+                if(satisfied){
+                    updatedPointers.add(pointer);
+                    updatedInterval.insertInOrder(ts + leftOffset, ts + rightOffset);
+                }
+            }
+        }
+
+        System.out.println("varName: " + varName + " original number of events:" + cnt + " -> filteredEventNum: " + updatedPointers.size());
+
+        varPointers.put(varName, updatedPointers);
+        return updatedInterval.serialize();
+    }
+
+
+    public ByteBuffer updatePointers(String varName, long window, int headTailMarker, ReplayIntervals replayIntervals, Map<String, Boolean> previousOrNext,
+                                     Map<String, Map<Long, Set<String>>> pairs, Map<String, List<EqualDependentPredicate>> dependentPredicateMap){
+        // headTailMarker only has three cases: 0 (leftmost), 1  (rightmost), 2 (middle)
+        long leftOffset = (headTailMarker == 0) ? 0 : -window;
+        long rightOffset = (headTailMarker == 1) ? 0 : window;
+        List<Integer> pointers = varPointers.get(varName);
+        List<Integer> updatedPointers = new ArrayList<>(pointers.size());
+
+        ReplayIntervals updatedInterval = new ReplayIntervals();
+        int cnt = 0;
+        for(int pointer : pointers){
+            byte[] record = records.get(pointer);
+            long ts = schema.getTimestamp(record);
+            if(replayIntervals.contains(ts)){
+                cnt++;
+                // check all related dependent predicates
+                // for example, varName: c, previousVariables: a, b
+                // dependent predicates: a.A1 = c.A1 + 5 AND b.A2 * 2 = c.A2
+                boolean satisfied = true;
+                for(String preVarName : previousOrNext.keySet()){
+                    List<EqualDependentPredicate> dps = dependentPredicateMap.get(preVarName);
+
+                    Map<Long, Set<String>> pairSet = pairs.get(preVarName);
+                    EqualDependentPredicate firstEDP = dps.get(0);
+                    String attrName = firstEDP.getAttrName(varName);
+                    String attrValue = schema.getColumnValue(attrName, record).toString();
+
+                    // false: previous, true: next
+                    boolean next = previousOrNext.get(preVarName);
+                    if(next){
+
+                        boolean curWindowContains = pairSet.containsKey(ts / window) && pairSet.get(ts / window).contains(attrValue);
+                        boolean nextWindowContains = pairSet.containsKey(ts / window + 1) && pairSet.get(ts / window + 1).contains(attrValue);
+                        if(!curWindowContains && !nextWindowContains) {
+                            satisfied = false;
+                            break;
+                        }
+                    }else{
+                        boolean curWindowContains = pairSet.containsKey(ts / window) && pairSet.get(ts / window).contains(attrValue);
+                        boolean prevWindowContains = pairSet.containsKey(ts / window - 1) && pairSet.get(ts / window - 1).contains(attrValue);
+                        if(!curWindowContains && !prevWindowContains){
+                            satisfied = false;
+                            break;
+                        }
+                    }
+                }
+                // if satisfy window condition and join condition
+                if(satisfied){
+                    updatedPointers.add(pointer);
+                    updatedInterval.insertInOrder(ts + leftOffset, ts + rightOffset);
+                }
+            }
+        }
+
+        System.out.println("varName: " + varName + " original number of events:" + cnt + " -> filteredEventNum: " + updatedPointers.size());
+        varPointers.put(varName, updatedPointers);
+        updatedInterval.intersect(replayIntervals);
+        System.out.println("after intersection, interval num: " + updatedInterval.getIntervals().size());
+        return updatedInterval.serialize();
     }
 
     // return interval set, used for multiple

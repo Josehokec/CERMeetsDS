@@ -34,6 +34,10 @@ public class PushDownRPCImpl implements PushDownRPC.Iface {
             long endRead = System.currentTimeMillis();
             System.out.println("read cost: " + (endRead - startRead) + "ms");
 
+            if (filteredRecords == null || filteredRecords.isEmpty()) {
+                return new DataChunk(-1, ByteBuffer.allocate(0), true);
+            }
+
             // note that if filteredRecords is empty, this will occur exception
             recordSize = filteredRecords.get(0).length;
             MAX_RECORD_NUM = Args.MAX_CHUNK_SIZE / recordSize;

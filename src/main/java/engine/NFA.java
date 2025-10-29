@@ -7,12 +7,7 @@ import store.ColumnInfo;
 import store.EventSchema;
 import utils.Pair;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Non-determine finite automata for complex event recognition
@@ -31,7 +26,7 @@ public class NFA {
     public NFA(){
         stateNum = 0;
         stateMap = new HashMap<>();
-        activeStates = new HashSet<>();
+        activeStates = new TreeSet<>();
         eventCache = new EventCache();
         window = Long.MAX_VALUE;
         State startState = createState("start", true, false);
@@ -200,16 +195,22 @@ public class NFA {
 
     public void consume(byte[] record, SelectionStrategy strategy, EventSchema schema){
         Set<State> allNextStates = new HashSet<>();
+        int insertedRecordPointer = -1;
+        // last state to first state
         for(State state : activeStates){
             // final state cannot transact
             if(!state.getIsFinal()){
                 // using match strategy
-                Set<State> nextStates = state.transition(eventCache, record, window, strategy, schema);
-                allNextStates.addAll(nextStates);
+                Set<State> nextStates = state.transition(eventCache, record, window, strategy, schema, insertedRecordPointer);
+                if(!nextStates.isEmpty()){
+                    insertedRecordPointer = eventCache.getAllEvents().size() - 1;
+                    allNextStates.addAll(nextStates);
+                }
             }
         }
         // add start state, maybe has performance bottle
         activeStates.addAll(allNextStates);
+        // activeStates.removeIf(state -> !state.getIsStart() && state.getPartialMatchCache().getMatchList().isEmpty());
     }
 
     /**

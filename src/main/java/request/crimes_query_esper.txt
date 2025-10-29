@@ -206,6 +206,206 @@ SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds)
     DEFINE
         A AS A.type = 'ROBBERY',
         B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.beat >= 1611 AND C.beat <= 2211
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 1007 AND A.beat <= 1607,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.district >= 19 AND C.district <= 28
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.district >= 5 AND C.district <= 14
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY' AND B.district >= 9 AND B.district <= 18,
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.district >= 18 AND C.district <= 27
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 18 AND A.district <= 27,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 1523 AND A.beat <= 2123,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 4 AND A.district <= 13,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.district >= 20 AND C.district <= 29
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 1409 AND A.beat <= 2009,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY' AND B.beat >= 1605 AND B.beat <= 2205,
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 665 AND A.beat <= 1265,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 374 AND A.beat <= 974,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY' AND B.district >= 11 AND B.district <= 20,
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 1272 AND A.beat <= 1872,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 17 AND A.district <= 26,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.beat >= 1241 AND C.beat <= 1841
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY' AND B.beat >= 1669 AND B.beat <= 2269,
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ALL MATCHES
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C)
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
         C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.beat >= 463 AND C.beat <= 1063
 );
 SELECT AID, BID, CID FROM EsperCrimes#ext_timed(timestamp, 1800000 milliseconds) MATCH_RECOGNIZE(

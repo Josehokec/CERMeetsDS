@@ -20,7 +20,6 @@ public class ReaderThread4List extends Thread{
     // query results
     List<byte[]> filteredRecords;
 
-
     public ReaderThread4List(File file, long start, long end, EventSchema schema, Map<String, List<Pair<IndependentPredicate, ColumnInfo>>> ipMap){
         this.file = file;
         this.start = start;

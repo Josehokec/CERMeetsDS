@@ -1,0 +1,8 @@
+package rpc2;
+
+public enum Approach {
+    CONCURRENT_OURS,
+    CONCURRENT_PUSH_DOWN,
+    CONCURRENT_PUSH_PULL,
+    CONCURRENT_NAIVE_TWO_TRIPS
+}

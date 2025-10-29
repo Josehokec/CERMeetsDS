@@ -1,37 +1,90 @@
-package compute;
+package cn;
 
-import event.*;
-import org.apache.flink.table.api.DataTypes;
-import org.apache.flink.table.api.Schema;
-import org.apache.thrift.TConfiguration;
+import compute.Args;
+import compute.EvaluationEngineSase;
+import rpc2.iface.DataChunk;
+import rpc2.iface.TwoTripsRPC2;
+import rpc2.iface.TwoTripsDataChunk;
 import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.TConfiguration;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.layered.TFramedTransport;
-import parser.EqualDependentPredicate;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import parser.QueryParse;
 import request.ReadQueries;
-import rpc.iface.DataChunk;
-import rpc.iface.TsAttrPair;
-import rpc.iface.TwoTripsDataChunk;
-import rpc.iface.TwoTripsRPC;
 import store.EventSchema;
 import utils.ReplayIntervals;
-import utils.SortByTs;
-
-import java.io.File;
-import java.io.PrintStream;
-import java.nio.ByteBuffer;
+import rpc2.iface.TsAttrPair;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+import parser.EqualDependentPredicate;
+import java.nio.ByteBuffer;
+import utils.SortByTs;
 
-public class RunTwoTrips {
+public class RunMultiTwoTrips {
+
+    static class MultiUser extends Thread{
+        private final String clientId;
+        List<TTransport> transports;
+        List<TwoTripsRPC2.Client> clients;
+        private final String datasetName;
+        private final List<String> sqlList;
+
+        public MultiUser(String clientId, String datasetName, int userNum, int userId){
+            this.clientId = clientId;
+            this.datasetName = datasetName;
+
+            List<String> allQueries = ReadQueries.getQueryList(datasetName, false);
+            int from = userId * (allQueries.size() / userNum);
+            int to = (userId + 1) * (allQueries.size() / userNum);
+            if(userId == userNum -1){
+                to = allQueries.size();
+            }
+            sqlList = allQueries.subList(from, to);
+            System.out.println("sqlList size: " + sqlList.size());
+
+            TConfiguration conf = new TConfiguration(Args.maxMassageLen, Args.maxMassageLen, Args.recursionLimit);
+            // please modify according to your storage node IPs and ports
+            String[] storageNodeIps = {"localhost"};
+            int[] ports = {9090, 9090};
+            int nodeNum = storageNodeIps.length;
+            int timeout = 0;
+            transports = new ArrayList<>(nodeNum);
+            clients = new ArrayList<>(nodeNum);
+
+            try{
+                for(int i = 0; i < nodeNum; i++) {
+                    TSocket socket = new TSocket(conf, storageNodeIps[i], ports[i], timeout);
+                    TTransport transport = new TFramedTransport(socket, Args.maxMassageLen);
+                    TProtocol protocol = new TBinaryProtocol(transport);
+                    TwoTripsRPC2.Client client = new TwoTripsRPC2.Client(protocol);
+                    // when we open, we can call related interface
+                    transport.open();
+                    clients.add(client);
+                    transports.add(transport);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void run() {
+
+            runQueries(clientId, sqlList, clients);
+
+            // we need to close transport
+            for(TTransport transport : transports){
+                transport.close();
+            }
+        }
+    }
 
     static class FirstTripThread extends Thread{
-        private final TwoTripsRPC.Client client;
+        private final TwoTripsRPC2.Client client;
+        private final String clientId;
         private final String tableName;
         private final String sql;
 
@@ -39,8 +92,9 @@ public class RunTwoTrips {
         private Map<String, Set<TsAttrPair>> tsAttrPairMap;
         private int communicationCost;
 
-        public FirstTripThread(TwoTripsRPC.Client client, String tableName, String sql){
+        public FirstTripThread(TwoTripsRPC2.Client client, String clientId, String tableName, String sql){
             this.client = client;
+            this.clientId = clientId;
             this.tableName = tableName;
             this.sql = sql;
 
@@ -66,7 +120,7 @@ public class RunTwoTrips {
                 boolean isLastChunk;
                 int offset = 0;
                 do{
-                    TwoTripsDataChunk chunk = client.pullBasicInfo(tableName, sql, offset);
+                    TwoTripsDataChunk chunk = client.pullBasicInfo(clientId, tableName, sql, offset);
                     if(chunk.intervalMap != null){
                         for(String varName : chunk.intervalMap.keySet()){
                             ByteBuffer buffer = chunk.intervalMap.get(varName);
@@ -104,15 +158,16 @@ public class RunTwoTrips {
     }
 
     static class SecondTripThread extends Thread{
-        private final TwoTripsRPC.Client client;
+        private final TwoTripsRPC2.Client client;
         private final ByteBuffer replayIntervalsBuffer;
-
+        private final String clientId;
         private final int recordSize;
         private List<byte[]> events;
         private long communicationCost;
 
-        public SecondTripThread(TwoTripsRPC.Client client, ByteBuffer replayIntervalsBuffer, int recordSize){
+        public SecondTripThread(TwoTripsRPC2.Client client, String clientId, ByteBuffer replayIntervalsBuffer, int recordSize){
             this.client = client;
+            this.clientId = clientId;
             this.replayIntervalsBuffer = replayIntervalsBuffer;
             this.recordSize = recordSize;
             events = new ArrayList<>(4096);
@@ -133,7 +188,7 @@ public class RunTwoTrips {
                 boolean isLastChunk;
                 int offset = 0;
                 do{
-                    DataChunk chunk = client.pullEvents(offset, replayIntervalsBuffer);
+                    DataChunk chunk = client.pullEvents(clientId, offset, replayIntervalsBuffer);
                     communicationCost += 4 + replayIntervalsBuffer.capacity();
                     communicationCost += chunk.data.capacity();
 
@@ -153,7 +208,7 @@ public class RunTwoTrips {
         }
     }
 
-    public static List<byte[]> communicate(String sql, List<TwoTripsRPC.Client> clients){
+    public static List<byte[]> communicate(String clientId, String sql, List<TwoTripsRPC2.Client> clients) {
         QueryParse query = new QueryParse(sql);
         String tableName = query.getTableName();
         long transmissionSize = 0;
@@ -163,17 +218,13 @@ public class RunTwoTrips {
         int recordSize = schema.getFixedRecordLen();
 
         List<FirstTripThread> firstTripThreads = new ArrayList<>(nodeNum);
-        for(TwoTripsRPC.Client client : clients){
-            FirstTripThread thread = new FirstTripThread(client, tableName, sql);
+        for(TwoTripsRPC2.Client client : clients){
+            FirstTripThread thread = new FirstTripThread(client, clientId, tableName, sql);
             thread.start();
             firstTripThreads.add(thread);
         }
         for(FirstTripThread t : firstTripThreads){
-            try{
-                t.join();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            try{t.join();}catch (Exception e){e.printStackTrace();}
         }
 
         //long time1Start = System.currentTimeMillis();
@@ -204,15 +255,11 @@ public class RunTwoTrips {
             String varName = entry.getKey();
             ReplayIntervals curIntervals = entry.getValue();
             varIntervalLenMap.put(varName, curIntervals.getTimeLength());
-            // debug
-            // System.out.println("varName: " + varName + " length: " + curIntervals.getTimeLength());
 
             if(finalIntervals == null){
                 finalIntervals = curIntervals;
             }else{
                 finalIntervals.intersect(curIntervals);
-                // debug
-                // System.out.println("updated length: " + finalIntervals.getTimeLength());
             }
         }
 
@@ -312,12 +359,9 @@ public class RunTwoTrips {
         }
 
         ByteBuffer buffer = finalIntervals.serialize();
-        //long time1End = System.currentTimeMillis();
-        //System.out.println("determine replay intervals cost: " + (time1End - time1Start) + "ms");
-
         List<SecondTripThread> pullThreads = new ArrayList<>(nodeNum);
-        for(TwoTripsRPC.Client client : clients){
-            SecondTripThread t = new SecondTripThread(client, buffer, recordSize);
+        for(TwoTripsRPC2.Client client : clients){
+            SecondTripThread t = new SecondTripThread(client, clientId, buffer, recordSize);
             t.start();
             pullThreads.add(t);
         }
@@ -341,191 +385,52 @@ public class RunTwoTrips {
         }
         System.out.println("transmission cost: " + transmissionSize + " bytes");
         return filteredEvent;
+
     }
 
-    public static void runQueries(List<TwoTripsRPC.Client> clients, String datasetName, boolean isEsper){
-        EventSchema eventSchema = EventSchema.getEventSchema(datasetName);
-        Schema schema = null;
-
-        // esper: 1, flink: 2, sase: 3
-        int ENGINE_ID;
-        if(isEsper){
-            ENGINE_ID = 1;
-        }else if(Args.isSaseEngine){
-            ENGINE_ID = 3;
-        }else{
-            ENGINE_ID = 2;
-            schema = getSchemaByDatasetName(datasetName);
-        }
-
-        List<String> sqlList = ReadQueries.getQueryList(datasetName, false);
-        List<String> esperSqlList = ReadQueries.getQueryList(datasetName, true);
-
-        // sqlList.size()
+    public static void runQueries(String clientId, List<String> sqlList, List<TwoTripsRPC2.Client> clients){
         for(int i = 0; i < sqlList.size(); i++){
-            System.out.println("query id: " + i);
+            System.out.println(clientId + ", query id: " + i);
+            long queryStart = System.currentTimeMillis();
             String sql = sqlList.get(i);
-
             long startTime = System.currentTimeMillis();
-            List<byte[]> byteRecords = communicate(sql, clients);
+            List<byte[]> byteRecords = communicate(clientId, sql, clients);
             long endTime = System.currentTimeMillis();
-            System.out.println("final event size: " + byteRecords.size());
+            System.out.println(clientId + ", final event size: " + byteRecords.size());
 
             // we need sort operation
+            QueryParse queryParser = new QueryParse(sql);
+            String datasetName = queryParser.getTableName();
+            EventSchema eventSchema = EventSchema.getEventSchema(datasetName);
+
             byteRecords = SortByTs.sort(byteRecords, eventSchema);
-            System.out.println("pull event time: " + (endTime - startTime) + "ms");
+            System.out.println(clientId + ", pull event time: " + (endTime - startTime) + "ms");
+            EvaluationEngineSase.processQuery(byteRecords, sql);
 
-            switch (ENGINE_ID){
-                case 1:
-                    String esperSql = esperSqlList.get(i);
-                    switch (datasetName){
-                        case "CRIMES":
-                            List<EsperCrimes> esperCrimesEvents = byteRecords.stream().map(EsperCrimes::valueOf).collect(Collectors.toList());
-                            EvaluationEngineEsper.processQuery(esperCrimesEvents, esperSql, datasetName);
-                            break;
-                        case "CITIBIKE":
-                            List<EsperCitibike> esperCitibikeEvents = byteRecords.stream().map(EsperCitibike::valueOf).collect(Collectors.toList());
-                            EvaluationEngineEsper.processQuery(esperCitibikeEvents, esperSql, datasetName);
-                            break;
-                        case "CLUSTER":
-                            List<EsperCluster> esperClusterEvents = byteRecords.stream().map(EsperCluster::valueOf).collect(Collectors.toList());
-                            EvaluationEngineEsper.processQuery(esperClusterEvents, esperSql, datasetName);
-                            break;
-                        default:
-                            // ...
-                    }
-                    break;
-                case 2:
-                    switch (datasetName){
-                        case "CRIMES":
-                            List<CrimesEvent> crimesEvents = byteRecords.stream().map(CrimesEvent::valueOf).collect(Collectors.toList());
-                            EvaluationEngineFlink.processQuery(crimesEvents, schema, sql, datasetName);
-                            break;
-                        case "CITIBIKE":
-                            List<CitibikeEvent> citibikeEvents = byteRecords.stream().map(CitibikeEvent::valueOf).collect(Collectors.toList());
-                            EvaluationEngineFlink.processQuery(citibikeEvents, schema, sql, datasetName);
-                            break;
-                        case "CLUSTER":
-                            List<ClusterEvent> clusterEvents = byteRecords.stream().map(ClusterEvent::valueOf).collect(Collectors.toList());
-                            EvaluationEngineFlink.processQuery(clusterEvents, schema, sql, datasetName);
-                            break;
-                        default:
-                            // ...
-                    }
-                    break;
-                case 3:
-                    EvaluationEngineSase.processQuery(byteRecords, sql);
-            }
+            long queryEnd = System.currentTimeMillis();
+            System.out.println(clientId + ", " + i + "-th query cost: " + (queryEnd - queryStart) + "ms");
         }
     }
 
-    private static Schema getSchemaByDatasetName(String datasetName){
-        Schema schema;
-        switch (datasetName){
-            case "CRIMES":
-                schema = Schema.newBuilder()
-                        .column("type", DataTypes.STRING())
-                        .column("id", DataTypes.INT())
-                        .column("caseNumber", DataTypes.STRING())
-                        .column("IUCR", DataTypes.STRING())
-                        .column("beat", DataTypes.INT())
-                        .column("district", DataTypes.INT())
-                        .column("latitude", DataTypes.DOUBLE())
-                        .column("longitude", DataTypes.DOUBLE())
-                        .column("FBICode", DataTypes.STRING())
-                        .column("eventTime", DataTypes.TIMESTAMP(3))
-                        .watermark("eventTime", "eventTime - INTERVAL '1' SECOND")
-                        .build();
-                break;
-            case "CITIBIKE":
-                schema = Schema.newBuilder()
-                        .column("type", DataTypes.STRING())
-                        .column("ride_id", DataTypes.BIGINT())
-                        .column("start_station_id", DataTypes.INT())
-                        .column("end_station_id", DataTypes.INT())
-                        .column("start_lat", DataTypes.DOUBLE())
-                        .column("start_lng", DataTypes.DOUBLE())
-                        .column("end_lat", DataTypes.DOUBLE())
-                        .column("end_lng", DataTypes.DOUBLE())
-                        .column("eventTime", DataTypes.TIMESTAMP(3))
-                        .watermark("eventTime", "eventTime - INTERVAL '1' SECOND")
-                        .build();
-                break;
-            case "CLUSTER":
-                schema = Schema.newBuilder()
-                        .column("type", DataTypes.STRING())
-                        .column("JOBID", DataTypes.BIGINT())
-                        .column("index", DataTypes.INT())
-                        .column("scheduling", DataTypes.STRING())
-                        .column("priority", DataTypes.INT())
-                        .column("CPU", DataTypes.FLOAT())
-                        .column("RAM", DataTypes.FLOAT())
-                        .column("DISK", DataTypes.FLOAT())
-                        .column("eventTime", DataTypes.TIMESTAMP(3))
-                        .watermark("eventTime", "eventTime - INTERVAL '1' SECOND")
-                        .build();
-                break;
-            case "SYNTHETIC":
-                schema = Schema.newBuilder()
-                        .column("type", DataTypes.STRING())
-                        .column("a1", DataTypes.INT())
-                        .column("a2", DataTypes.STRING())
-                        .column("a3", DataTypes.STRING())
-                        .column("eventTime", DataTypes.TIMESTAMP(3))
-                        .watermark("eventTime", "eventTime - INTERVAL '1' SECOND")
-                        .build();
-                break;
-            default:
-                throw new RuntimeException("without this schema");
-        }
-        return schema;
-    }
-
-    public static  void main(String[] args) throws Exception {
-        TConfiguration conf = new TConfiguration(Args.maxMassageLen, Args.maxMassageLen, Args.recursionLimit);
-
-        // please modify two lines
-        String[] storageNodeIps = {"localhost"};//, "172.27.146.110"
-        int[] ports = {9090, 9090};
-
-        int nodeNum = storageNodeIps.length;
-        int timeout = 0;
-        List<TTransport> transports = new ArrayList<>(nodeNum);
-        List<TwoTripsRPC.Client> clients = new ArrayList<>(nodeNum);
-
-        for(int i = 0; i < nodeNum; i++) {
-            TSocket socket = new TSocket(conf, storageNodeIps[i], ports[i], timeout);
-            TTransport transport = new TFramedTransport(socket, Args.maxMassageLen);
-            TProtocol protocol = new TBinaryProtocol(transport);
-            TwoTripsRPC.Client client = new TwoTripsRPC.Client(protocol);
-            // when we open, we can call related interface
-            transport.open();
-            clients.add(client);
-            transports.add(transport);
-        }
-
-//        String sep = File.separator;
-//        String filePath = System.getProperty("user.dir") + sep + "src" + sep + "main" + sep + "output" + sep + "two_trips_crimes_flink.txt";
-//        System.setOut(new PrintStream(filePath));
-
-        // "CRIMES", "CITIBIKE", "CLUSTER", "SYNTHETIC"
-        String datasetName = "SYNTHETIC";
-        boolean isEsper = false;
-        System.out.println("@args #isEsper: " + isEsper + " #datasetName: " + datasetName + " #isSaseEngine: " + Args.isSaseEngine);
+    public static void main(String[] args) throws Exception {
         LocalDateTime now = LocalDateTime.now();
         System.out.println("Start time " + now);
-        long start = System.currentTimeMillis();
-        // please modify datasetName, isEsper to change running mode
-        runQueries(clients, datasetName, isEsper);
-        long end = System.currentTimeMillis();
+
+        int userNum = 5;
+        String datasetName = "CRIMES";
+        String computeName = "CN0";//CN0, CN1, ...
+        List<MultiUser> users = new ArrayList<>(userNum);
+
+        for(int i = 0; i < userNum; i++){
+            MultiUser user = new MultiUser(computeName + "-USER" + i, datasetName, userNum, i);
+            user.start();
+            users.add(user);
+        }
+        for(MultiUser user : users){
+            user.join();
+        }
 
         now = LocalDateTime.now();
         System.out.println("Finish time " + now);
-        System.out.println("Take " + (end - start) + "ms...");
-
-        // we need to close transport
-        for(TTransport transport : transports){
-            transport.close();
-        }
     }
 }

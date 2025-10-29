@@ -14,6 +14,23 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
+/*
+4,1000,12345,28,1000
+5,1200,12345,25,1500
+6,1300,12345,85,2000
+7,2000,123456,28,1000
+8,2050,123456,25,1500
+9,2100,123456,20,2000
+10,2150,123456,83,1000
+11,3100,1234,28,1000
+12,3200,1234,25,1500
+13,3250,1234,85,2000
+14,4000,123,34,1000
+15,4050,123,25,1500
+16,4100,123,16,2000
+17,4150,123,83,1000
+ */
 public class NFATest {
 
     @Test
@@ -46,29 +63,33 @@ public class NFATest {
                     "SELECT * FROM stock MATCH_RECOGNIZE(" +
                     "partition by symbol " +
                     "ORDER BY timestamp " +
-                    "MEASURES A.id as AID ONE ROW PER MATCH AFTER MATCH SKIP TO NEXT ROW " +
+                    "MEASURES A.id as AID " +
+                    "ONE ROW PER MATCH " +
+                    "AFTER MATCH SKIP TO NEXT ROW " +
                     "PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '200' SECOND " +
                     "DEFINE " +
                     "    A AS A.price < 30, " +
-                    "    B AS B.price < A.price," +//B.symbol = A.symbol AND
-                    "    C AS C.symbol = B.symbol AND C.price > 80 " +
+                    "    B AS B.price < A.price," +
+                    "    C AS C.price > 80 " +
                     ") MR;";
             QueryParse query = new QueryParse(querySQL);
             NFA nfa = new NFA();
             nfa.constructNFA(query);
 
-            String fileName= "event_dataset.csv";
+            String fileName= "test_stock.csv";
             List<byte[]> events = obtainByteEvents(fileName);
 
             long startTime = System.nanoTime();
             EventSchema schema = EventSchema.getEventSchema("STOCK");
+            int countEvents = 0;
             for (byte[] event : events) {
-                nfa.consume(event, SelectionStrategy.SKIP_TILL_ANY_MATCH, schema);
+                nfa.consume(event, SelectionStrategy.STRICT_CONTIGUOUS, schema);
+                countEvents++;
             }
-            //nfa.printAnyMatch(schema);
-            int count = nfa.getMatchesNum();
+            nfa.printAnyMatch(schema);
+//            int count = nfa.getMatchesNum();
+//            System.out.println("result size: " + count);
 
-            System.out.println("result size: " + count);
 
             long endTime = System.nanoTime();
             long elapsedTime = endTime - startTime;

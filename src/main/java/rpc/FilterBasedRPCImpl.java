@@ -11,6 +11,7 @@ import rpc.iface.FilterBasedRPC;
 import rpc.iface.FilteredResult;
 import rpc.iface.SameDataChunk;
 import store.EventCache;
+import store.EventSchema;
 import store.FullScan;
 
 import java.nio.ByteBuffer;
@@ -24,6 +25,7 @@ public class FilterBasedRPCImpl implements FilterBasedRPC.Iface{
     public static int queryId = 0;
     public List<byte[]> records;
     public int offset;
+    public static boolean enableRangeRead = false;
 
     @Override
     public Map<String, Integer> initial(String tableName, Map<String, List<String>> ipStrMap) throws TException {
@@ -138,11 +140,23 @@ public class FilterBasedRPCImpl implements FilterBasedRPC.Iface{
             if(Args.isOptimizedSwf){
                 optimizedSWF = OptimizedSWF.deserialize(updatedSWF);
                 records = cache.getRecords(window, optimizedSWF);
+
+                // pull range
+                if(enableRangeRead){
+                    EventSchema schema = cache.getSchema();
+                    String tableName = schema.getTableName();
+                    FullScan fullScan = new FullScan(tableName);
+                    records = fullScan.concurrentScan(optimizedSWF, window);
+                }
             }
             else{
                 swf = SWF.deserialize(updatedSWF);
                 records = cache.getRecords(window, swf);
             }
+        }
+
+        if (records == null || records.isEmpty()) {
+            return new SameDataChunk(-1, ByteBuffer.allocate(0), true);
         }
 
         int remaining = records.size() - offset;

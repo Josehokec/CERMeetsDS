@@ -6,7 +6,7 @@ import store.EventSchema;
 
 import java.util.*;
 
-public class State {
+public class State implements Comparable<State>{
     private final String stateName;                 // state name (variable name)
     private final int stateId;                      // stateId can unique represent a state
     private final List<Transition> transitions;     // edges / transactions
@@ -23,11 +23,20 @@ public class State {
         isStart = false;
     }
 
+    @Override
+    public int compareTo(State other) {
+        return -Integer.compare(this.stateId, other.stateId);
+    }
+
     public boolean getIsFinal(){
         return isFinal;
     }
 
     public void setFinal() { isFinal = true; }
+
+    public boolean getIsStart(){
+        return isStart;
+    }
 
     public void setStart(){
         isStart = true;
@@ -54,7 +63,7 @@ public class State {
      * @param strategy - selection strategy (currently, we only support SKIP_TILL_NEXT_MATCH and SKIP_TILL_ANY_MATCH)
      * @return - next state
      */
-    public Set<State> transition(EventCache eventCache, byte[] record, long window, SelectionStrategy strategy, EventSchema schema){
+    public Set<State> transition(EventCache eventCache, byte[] record, long window, SelectionStrategy strategy, EventSchema schema, int insertedRecordPointer){
         Set<State> nextStates = new HashSet<>();
         long timestamp = schema.getTimestamp(record);
         // for each transition (a state can transition multiple state)
@@ -69,7 +78,7 @@ public class State {
                 // if yes, then we directly add this record to next state's match buffer
                 // otherwise, we need to check dependent predicates
                 if(isStart){
-                    int recordPointer = eventCache.insert(record);
+                    int recordPointer = insertedRecordPointer == -1 ? eventCache.insert(record) : insertedRecordPointer;
                     // this state is start state, we need to generate a partial match
                     List<Integer> eventPointers = new ArrayList<>(4);
                     eventPointers.add(recordPointer);
@@ -90,7 +99,6 @@ public class State {
                     hasTransition = true;
                 }
                 else{
-                    int hasInsertedPointers = -1;
                     List<PartialMatch> curPartialMatches = partialMatchCache.getPartialMatchList(partitionName);
 
                     Set<Integer> headerSet = new HashSet<>();
@@ -133,7 +141,7 @@ public class State {
 
                             if(satisfyAllDP){
                                 //wrong code: int recordPointer = eventCache.insert(record);
-                                hasInsertedPointers = hasInsertedPointers == -1 ? eventCache.insert(record) : hasInsertedPointers;
+                                int hasInsertedPointers = insertedRecordPointer == -1 ? eventCache.insert(record) : insertedRecordPointer;
 
                                 // selection strategy
                                 if(strategy == SelectionStrategy.SKIP_TILL_NEXT_MATCH){
@@ -149,6 +157,10 @@ public class State {
                                         headerSet.add(curMatch.getPointer(0));
                                         it.remove();
                                     }
+                                }
+                                else if(strategy == SelectionStrategy.STRICT_CONTIGUOUS){
+                                    // for STRICT_CONTIGUOUS, once can match then this partial match cannot match others events
+                                    it.remove();
                                 }
 
                                 // create a match and add it to next buffer
@@ -168,6 +180,11 @@ public class State {
                                 nextCache.addPartialMatch(match, partitionName);
                                 hasTransition = true;
                             }
+                            else if(strategy == SelectionStrategy.STRICT_CONTIGUOUS){
+                                // for STRICT_CONTIGUOUS, once dependent predicate fails, we clear partial match buffer and break
+                                curPartialMatches.clear();
+                                break;
+                            }
                         }
                     }
                 }
@@ -175,6 +192,13 @@ public class State {
                 if(hasTransition){
                     nextStates.add(nextState);
                 }
+            }
+            else if(strategy == SelectionStrategy.STRICT_CONTIGUOUS && !isStart){
+                // for STRICT_CONTIGUOUS, once independent predicate fails, we clear partial match buffer and break
+                String partitionName = schema.getColumnValue(NFA.partitionColName, record).toString();
+                List<PartialMatch> curPartialMatches = partialMatchCache.getPartialMatchList(partitionName);
+                curPartialMatches.clear();
+                break;
             }
         }
 

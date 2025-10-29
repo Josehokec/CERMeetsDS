@@ -5,6 +5,226 @@ SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
     AFTER MATCH SKIP TO NEXT ROW
     PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
     DEFINE
+        A AS A.type = 'B' AND A.start_lat >= 40.75123 AND A.start_lat <= 40.774903,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.75123 AND B.start_lat <= 40.774903,
+        C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.75123 AND C.start_lat <= 40.774903 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'C' AND A.start_lng >= -73.98186 AND A.start_lng <= -73.97473,
+        B AS B.type = 'F' AND B.start_station_id = A.end_station_id AND B.start_lng >= -73.98186 AND B.start_lng <= -73.97473,
+        C AS C.type = 'I' AND C.start_station_id = B.end_station_id AND C.start_lng >= -73.98186 AND C.start_lng <= -73.97473 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'D' AND A.start_lng >= -73.9786254 AND A.start_lng <= -73.95611,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lng >= -73.9786254 AND B.start_lng <= -73.95611,
+        C AS C.type = 'J' AND C.start_station_id = B.end_station_id AND C.start_lng >= -73.9786254 AND C.start_lng <= -73.95611 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'C' AND A.start_lng >= -73.97452 AND A.start_lng <= -73.9549286,
+        B AS B.type = 'G' AND B.start_station_id = A.end_station_id AND B.start_lng >= -73.97452 AND B.start_lng <= -73.9549286,
+        C AS C.type = 'L' AND C.start_station_id = B.end_station_id AND C.start_lng >= -73.97452 AND C.start_lng <= -73.9549286 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'D' AND A.start_lng >= -74.006073 AND A.start_lng <= -73.99135,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lng >= -74.006073 AND B.start_lng <= -73.99135,
+        C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND C.start_lng >= -74.006073 AND C.start_lng <= -73.99135 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'A' AND A.start_lat >= 40.7407902 AND A.start_lat <= 40.751374,
+        B AS B.type = 'G' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.7407902 AND B.start_lat <= 40.751374,
+        C AS C.type = 'I' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.7407902 AND C.start_lat <= 40.751374 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'B' AND A.start_lat >= 40.650645 AND A.start_lat <= 40.712077,
+        B AS B.type = 'G' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.650645 AND B.start_lat <= 40.712077,
+        C AS C.type = 'J' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.650645 AND C.start_lat <= 40.712077 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'C' AND A.start_lng >= -73.96324 AND A.start_lng <= -73.941635,
+        B AS B.type = 'F' AND B.start_station_id = A.end_station_id AND B.start_lng >= -73.96324 AND B.start_lng <= -73.941635,
+        C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND C.start_lng >= -73.96324 AND C.start_lng <= -73.941635 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'B' AND A.start_lng >= -73.99095 AND A.start_lng <= -73.9814,
+        B AS B.type = 'F' AND B.start_station_id = A.end_station_id AND B.start_lng >= -73.99095 AND B.start_lng <= -73.9814 AND B.start_lng >= A.start_lng,
+        C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND C.start_lng >= -73.99095 AND C.start_lng <= -73.9814 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'A' AND A.start_lat >= 40.79977 AND A.start_lat <= 40.822396,
+        B AS B.type = 'G' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.79977 AND B.start_lat <= 40.822396 AND B.start_lng >= A.start_lng,
+        C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND B.start_lat >= 40.79977 AND B.start_lat <= 40.822396 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'C' AND A.start_lat >= 40.7452347 AND A.start_lat <= 40.755894,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.7452347 AND B.start_lat <= 40.755894 AND B.start_lat >= A.start_lat,
+        C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.7452347 AND C.start_lat <= 40.755894 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'B' AND A.start_lat >= 40.67889 AND A.start_lat <= 40.716521,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.67889 AND B.start_lat <= 40.716521 AND B.start_lat >= A.start_lat,
+        C AS C.type = 'L' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.67889 AND C.start_lat <= 40.716521 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'B' AND A.start_lng >= -73.99047 AND A.start_lng <= -73.980594,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lng >= -73.99047 AND B.start_lng <= -73.980594 AND B.start_lat >= A.start_lat,
+        C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND C.start_lng >= -73.99047 AND C.start_lng <= -73.980594 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'A' AND A.start_lat >= 40.73891 AND A.start_lat <= 40.74884,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.73891 AND B.start_lat <= 40.74884 AND B.start_lng >= A.start_lng,
+        C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.73891 AND C.start_lat <= 40.74884 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'C' AND A.start_lat >= 40.724524 AND A.start_lat <= 40.740819,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.724524 AND B.start_lat <= 40.740819 AND B.start_lat >= A.start_lat,
+        C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.724524 AND C.start_lat <= 40.740819 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'D' AND A.start_lat >= 40.72007 AND A.start_lat <= 40.73966,
+        B AS B.type = 'F' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.72007 AND B.start_lat <= 40.73966 AND B.start_lng >= A.start_lng,
+        C AS C.type = 'L' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.72007 AND C.start_lat <= 40.73966 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'C' AND A.start_lat >= 40.706956 AND A.start_lat <= 40.725984,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.706956 AND B.start_lat <= 40.725984 AND B.start_lng >= A.start_lng,
+        C AS C.type = 'L' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.706956 AND C.start_lat <= 40.725984 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'C' AND A.start_lat >= 40.72481 AND A.start_lat <= 40.740835,
+        B AS B.type = 'G' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.72481 AND B.start_lat <= 40.740835 AND B.start_lat >= A.start_lat,
+        C AS C.type = 'L' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.72481 AND C.start_lat <= 40.740835 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'B' AND A.start_lat >= 40.66551 AND A.start_lat <= 40.709442,
+        B AS B.type = 'F' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.66551 AND B.start_lat <= 40.709442 AND B.start_lat >= A.start_lat,
+        C AS C.type = 'I' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.66551 AND C.start_lat <= 40.709442 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
+        A AS A.type = 'D' AND A.start_lat >= 40.69911 AND A.start_lat <= 40.728131,
+        B AS B.type = 'H' AND B.start_station_id = A.end_station_id AND B.start_lat >= 40.69911 AND B.start_lat <= 40.728131 AND B.start_lng >= A.start_lng,
+        C AS C.type = 'L' AND C.start_station_id = B.end_station_id AND C.start_lat >= 40.69911 AND C.start_lat <= 40.728131 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng
+);
+SELECT * FROM CITIBIKE MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.ride_id as AID, B.ride_id as BID, C.ride_id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' MINUTE
+    DEFINE
         A AS A.type = 'B' AND A.start_lng >= -73.99095 AND A.start_lng <= -73.9814,
         B AS B.type = 'F' AND B.start_station_id = A.end_station_id AND B.start_lng >= -73.99095 AND B.start_lng <= -73.9814,
         C AS C.type = 'K' AND C.start_station_id = B.end_station_id AND C.start_lng >= -73.99095 AND C.start_lng <= -73.9814 AND C.start_lat <= B.start_lat AND C.start_lng <= B.start_lng

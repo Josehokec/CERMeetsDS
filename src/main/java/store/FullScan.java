@@ -1,20 +1,35 @@
 package store;
 
 
+import filter.OptimizedSWF;
 import parser.IndependentPredicate;
+import rpc.PullAllDataImpl;
+import s3.S3Reader;
+import s3.S3ReaderPlus;
 import utils.Pair;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+
+/*
+ * we have added S3 as storage backend
+ */
 public class FullScan {
     // if you have multiple storage nodes, please modify this variable
     // it will scan the files from event_store
     private final String tableName;
     private final String nodeId;
+    private boolean enableS3 = false;
 
     public static int threadNum = 4;
 
@@ -96,8 +111,90 @@ public class FullScan {
         return filteredRecords;
     }
 
+    // [pushall]
+    public List<byte[]> concurrentScan(int callNum){
+        if(PullAllDataImpl.MAX_MEMORY_SIZE % (EventStore.pageSize * threadNum) != 0){
+            throw new RuntimeException("MAX_MEMORY_SIZE must be multiple of pageSize * threadNum");
+        }
+
+        long startPos = callNum * (long) PullAllDataImpl.MAX_MEMORY_SIZE;
+        EventSchema schema = EventSchema.getEventSchema(tableName);
+        int dataLen = schema.getFixedRecordLen();
+        EventStore store = new EventStore(tableName + nodeId, false);
+        long fileSize = store.getFileSize();
+        File file = store.getFile();
+
+        if(fileSize <= startPos){
+            return new ArrayList<>();
+        }else if(fileSize - startPos < PullAllDataImpl.MAX_MEMORY_SIZE){
+            // read the rest part
+            long readPageNum = (fileSize - startPos) / EventStore.pageSize / threadNum;
+            List<ReaderThread4List2> threads = new ArrayList<>(threadNum);
+            for(int i = 0; i < threadNum; i++){
+                long start = startPos + (long) i * readPageNum * EventStore.pageSize;
+                long end = i == (threadNum - 1) ? fileSize : start + readPageNum * EventStore.pageSize;
+                ReaderThread4List2 thread = new ReaderThread4List2(file, start, end, dataLen);
+                threads.add(thread);
+                thread.start();
+            }
+            for(ReaderThread4List2 thread : threads){
+                try{
+                    thread.join();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            // here we need to merge results
+            List<byte[]> ans = new ArrayList<>((int)((fileSize - startPos) / dataLen));
+            for(ReaderThread4List2 thread : threads){
+                ByteBuffer bb = thread.getFilteredRecords();
+                bb.flip();
+                while(bb.remaining() >= dataLen){
+                    byte[] record = new byte[dataLen];
+                    bb.get(record);
+                    ans.add(record);
+                }
+            }
+            return ans;
+        }else{
+            List<ReaderThread4List2> threads = new ArrayList<>(threadNum);
+            for(int i = 0; i < threadNum; i++){
+                int offset = PullAllDataImpl.MAX_MEMORY_SIZE / threadNum;
+                long start = startPos + (long) i * offset;
+                long end = start + offset;
+                ReaderThread4List2 thread = new ReaderThread4List2(file, start, end, dataLen);
+                threads.add(thread);
+                thread.start();
+            }
+            for(ReaderThread4List2 thread : threads){
+                try{
+                    thread.join();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            // here we need to merge results
+            List<byte[]> ans = new ArrayList<>(PullAllDataImpl.MAX_MEMORY_SIZE / dataLen);
+            for(ReaderThread4List2 thread : threads){
+                ByteBuffer bb = thread.getFilteredRecords();
+                bb.flip();
+                while(bb.remaining() >= dataLen){
+                    byte[] record = new byte[dataLen];
+                    bb.get(record);
+                    ans.add(record);
+                }
+            }
+            return ans;
+        }
+    }
+
     // [pushdown] if storage node has multiple cpus, we can use concurrentScan function
     public List<byte[]> concurrentScan(Map<String, List<String>> ipStringMap){
+        if(enableS3){
+            S3Reader downloader = new S3Reader(ipStringMap, tableName);
+            return downloader.downloadFileParallel(tableName + nodeId + ".store");
+        }
+
         EventSchema schema = EventSchema.getEventSchema(tableName);
         EventStore store = new EventStore(tableName + nodeId, false);
         long fileSize = store.getFileSize();
@@ -134,7 +231,43 @@ public class FullScan {
         return ans;
     }
 
+    // [pull range]
+    public List<byte[]> concurrentScan(OptimizedSWF swf, long window){
+        EventSchema schema = EventSchema.getEventSchema(tableName);
+        EventStore store = new EventStore(tableName + nodeId, false);
+        int dataLen = schema.getFixedRecordLen();
+        long fileSize = store.getFileSize();
+        long readPageNum = fileSize / EventStore.pageSize / threadNum;
 
+        File file = store.getFile();
+
+        List<ReaderThread4List3> threads = new ArrayList<>(threadNum);
+        for(int i = 0; i < threadNum; i++){
+            long start = i * readPageNum * EventStore.pageSize;
+            long end = i == (threadNum - 1) ? fileSize : (i + 1) * readPageNum * EventStore.pageSize;
+            ReaderThread4List3 thread = new ReaderThread4List3(file, start, end, dataLen, swf, schema, window);
+            threads.add(thread);
+            thread.start();
+        }
+
+        for(ReaderThread4List3 thread : threads){
+            try{
+                thread.join();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        List<byte[]> ans = null;
+        for(ReaderThread4List3 thread : threads){
+            if(ans == null){
+                ans = thread.getFilteredRecords();
+            }else{
+                ans.addAll(thread.getFilteredRecords());
+            }
+        }
+        return ans;
+    }
 
 
     // here we will read all events in batch
@@ -287,6 +420,11 @@ public class FullScan {
 
     // concurrent read data
     public EventCache concurrentScanBasedVarName(Map<String, List<String>> ipStringMap){
+        if(enableS3){
+            S3ReaderPlus downloader = new S3ReaderPlus(ipStringMap, tableName);
+            return downloader.downloadFileParallel(tableName + nodeId + ".store");
+        }
+
         EventSchema schema = EventSchema.getEventSchema(tableName);
         EventStore store = new EventStore(tableName + nodeId, false);
         long fileSize = store.getFileSize();

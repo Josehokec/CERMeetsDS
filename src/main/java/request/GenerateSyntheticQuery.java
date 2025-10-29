@@ -54,9 +54,9 @@ SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
                     sql += " N" + j + "*? " + curVarName;
                 }
             }
-            sql += ") WITHIN INTERVAL '10' MINUTE\n    DEFINE\n        ";
+            sql += ") WITHIN INTERVAL '3' MINUTE\n    DEFINE\n        ";
 
-            double hasEqualPro = 1.0 / (varNum - 1);
+            double hasEqualPro = 1.5 / (varNum - 1);
             int preTypeId = -1;
             // 20 types
             for(int j = 0; j < varNum; j++){
@@ -85,6 +85,13 @@ SELECT * FROM SYNTHETIC MATCH_RECOGNIZE(
     }
 
     public static void main(String[] args){
-        generateQueries(8, 50, 0.1);
+        generateQueries(8, 50, 0.2);
     }
 }
+/*
+默认是4分钟，20%的选择率，默认平均1.5个等值条件；
+
+窗口大小实验：2，4，6，8
+选择率：5% 10% 20% 30%
+
+ */

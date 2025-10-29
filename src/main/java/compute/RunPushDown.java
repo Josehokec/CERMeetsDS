@@ -23,16 +23,13 @@ import utils.SortByTs;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RunPushDown {
-
     static class PushDownThread extends Thread {
         private final PushDownRPC.Client client;
         private final String tableName;
@@ -98,6 +95,7 @@ public class RunPushDown {
         int recordSize = schema.getFixedRecordLen();
 
         List<PushDownThread> pullThreads = new ArrayList<>(nodeNum);
+
         for(PushDownRPC.Client client : clients){
             PushDownThread thread = new PushDownThread(client, tableName, ipMap, recordSize);
             thread.start();
@@ -146,6 +144,7 @@ public class RunPushDown {
         // sqlList.size()
         for(int i = 0; i < sqlList.size(); i++){
             System.out.println("query id: " + i);
+            long queryStart = System.currentTimeMillis();
             String sql = sqlList.get(i);
             long startTime = System.currentTimeMillis();
             List<byte[]> byteRecords = communicate(sql, clients);
@@ -197,6 +196,8 @@ public class RunPushDown {
                     EvaluationEngineSase.processQuery(byteRecords, sql);
             }
 
+            long queryEnd = System.currentTimeMillis();
+            System.out.println("this query cost: " + (queryEnd - queryStart) + "ms");
         }
     }
 
@@ -289,8 +290,7 @@ public class RunPushDown {
         return filteredRecords;
     }
 
-
-    public static  void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         TConfiguration conf = new TConfiguration(Args.maxMassageLen, Args.maxMassageLen, Args.recursionLimit);
         String[] storageNodeIps = {"localhost"};//, "172.27.146.110"
         int[] ports = {9090, 9090};
@@ -314,7 +314,6 @@ public class RunPushDown {
         //String filePath = System.getProperty("user.dir") + sep + "src" + sep + "main" + sep + "output" + sep + "pushdown_cluster_sase.txt";
         //System.setOut(new PrintStream(filePath));
 
-
         // "CRIMES", "CITIBIKE", "CLUSTER", "SYNTHETIC"
         String datasetName = "CRIMES";
         boolean isEsper = false;
@@ -337,18 +336,11 @@ public class RunPushDown {
     }
 }
 
-
-/*
-String testSql = "SELECT * FROM CLUSTER MATCH_RECOGNIZE(\n" +
-                "    PARTITION BY JOBID\n" +
-                "    ORDER BY eventTime\n" +
-                "    MEASURES A.eventTime as ATS, B.eventTime as BTS, C.eventTime AS CTS\n" +
-                "    ONE ROW PER MATCH\n" +
-                "    AFTER MATCH SKIP TO NEXT ROW\n" +
-                "    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '5' SECOND\n" +
-                "    DEFINE\n" +
-                "        A AS A.type = 'TP0' AND A.CPU <= 0.015 AND A.RAM <= 0.015,\n" +
-                "        B AS B.type = 'TP1' AND B.JOBID = A.JOBID AND B.index < 5 AND B.CPU <= 0.015 AND B.RAM <= 0.015,\n" +
-                "        C AS C.type = 'TP5' AND C.JOBID = B.JOBID AND C.CPU <= 0.015 AND C.RAM <= 0.015\n" +
-                ");";
- */
+//    public static String generateClientId() {
+//        String clientId = generateClientId();
+//        String clientIdAndTableName = clientId + "::" + tableName;
+//        System.out.println("client id: " +  clientId);
+//
+//        String hostname = "CN_00";
+//        return hostname + UUID.randomUUID().toString().substring(0, 32);
+//    }

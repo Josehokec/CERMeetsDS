@@ -6,20 +6,24 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.layered.TFramedTransport;
-import rpc.iface.FilterBasedRPC;
-import rpc.iface.PushDownRPC;
-import rpc.iface.PushPullRPC;
-import rpc.iface.TwoTripsRPC;
+import rpc.iface.*;
 
 import java.io.FileNotFoundException;
 
 public class StorageServer {
     public static void main(String[] args) throws FileNotFoundException {
-        // please modify this to change various approach
-        // TWO_TRIPS, PUSH_DOWN, PUSH_PULL, OURS
+        /*
+        OURS,                   // our multi-round filtering approach using dual filtering strategy
+        PUSH_DOWN,              // push-down approach
+        PUSH_PULL,              // predicate push-pull
+        NAIVE_TWO_TRIPS,        // two-trips approach using interval array and hash table
+        NAIVE_MULTI_TRIPS,      // multi-trips approach using interval array and hash table
+        NAIVE_SWF_HASH_TABLE,   // SWF-based multi-round filtering using hash table
+        PULL_ALL                // pull all events to the compute server
+         */
         Approach approach = Approach.OURS;
         System.out.println("approach: " + approach);
-        StorageServer.startService(approach);
+        startService(approach);
     }
 
     public static void startService(Approach approach){
@@ -34,7 +38,7 @@ public class StorageServer {
                     FilterBasedRPC.Processor ours = new FilterBasedRPC.Processor(new FilterBasedRPCImpl());
                     targs.processor(ours);
                     break;
-                case TWO_TRIPS:
+                case NAIVE_TWO_TRIPS:
                     TwoTripsRPC.Processor two_trips = new TwoTripsRPC.Processor(new TwoTripsRPCImpl());
                     targs.processor(two_trips);
                     break;
@@ -45,6 +49,18 @@ public class StorageServer {
                 case PUSH_PULL:
                     PushPullRPC.Processor pushpull = new PushPullRPC.Processor(new PushPullRPCImpl());
                     targs.processor(pushpull);
+                    break;
+                case NAIVE_MULTI_TRIPS:
+                    BasicFilterBasedRPC.Processor multi_trips = new BasicFilterBasedRPC.Processor(new NaiveFilterBasedRPCImpl());
+                    targs.processor(multi_trips);
+                    break;
+                case PULL_ALL:
+                    PushDownRPC.Processor pull_all = new PushDownRPC.Processor(new PullAllDataImpl());
+                    targs.processor(pull_all);
+                    break;
+                case NAIVE_SWF_HASH_TABLE:
+                    BasicFilterBasedRPC.Processor swf_hash = new BasicFilterBasedRPC.Processor(new SwfFilterBasedRPCImpl());
+                    targs.processor(swf_hash);
                     break;
             }
             TBinaryProtocol.Factory protocolFactory = new TBinaryProtocol.Factory(Args.maxMassageLen, Args.maxMassageLen);

@@ -253,7 +253,6 @@ public class PushPullRPCImpl implements PushPullRPC.Iface {
         return new PushPullDataChunk(chunkId++, varEventMap, maxReadOffset == -1);
     }
 
-
     public static List<byte[]> mergeEvents(List<byte[]> allEvents, ByteBuffer eventBuffer, EventSchema schema){
         // without any duplicated records
         int bufferSize = eventBuffer.remaining();

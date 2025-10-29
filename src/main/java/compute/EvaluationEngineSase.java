@@ -30,4 +30,24 @@ public class EvaluationEngineSase {
         long endTime = System.currentTimeMillis();
         System.out.println("match time: " + (endTime - startTime) + "ms");
     }
+
+    public static void processQuery(List<byte[]> events, String sql, SelectionStrategy strategy){
+        long startTime = System.currentTimeMillis();
+        QueryParse query = new QueryParse(sql);
+        String tableName = query.getTableName();
+        EventSchema schema = EventSchema.getEventSchema(tableName);
+
+        NFA nfa = new NFA();
+        nfa.constructNFA(query);
+
+        for(byte[] event : events){
+            nfa.consume(event, strategy, schema);
+        }
+
+        List<String> queryRes = nfa.getMatchResults(schema, strategy);
+
+        System.out.println("number of tuples: " + queryRes.size());
+        long endTime = System.currentTimeMillis();
+        System.out.println("match time: " + (endTime - startTime) + "ms");
+    }
 }

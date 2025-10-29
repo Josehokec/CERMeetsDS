@@ -1,0 +1,940 @@
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.beat >= 1611 AND C.beat <= 2211
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 1007 AND A.beat <= 1607,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.district >= 19 AND C.district <= 28
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.district >= 5 AND C.district <= 14
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY' AND B.district >= 9 AND B.district <= 18,
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.district >= 18 AND C.district <= 27
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 18 AND A.district <= 27,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 1523 AND A.beat <= 2123,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 4 AND A.district <= 13,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.district >= 20 AND C.district <= 29
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 1409 AND A.beat <= 2009,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY' AND B.beat >= 1605 AND B.beat <= 2205,
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 665 AND A.beat <= 1265,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 374 AND A.beat <= 974,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY' AND B.district >= 11 AND B.district <= 20,
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.beat >= 1272 AND A.beat <= 1872,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 17 AND A.district <= 26,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.beat >= 1241 AND C.beat <= 1841
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY',
+        B AS B.type = 'BATTERY' AND B.beat >= 1669 AND B.beat <= 2269,
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '30' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '60' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '120' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);
+SELECT * FROM CRIMES MATCH_RECOGNIZE(
+    ORDER BY eventTime
+    MEASURES A.id as AID, B.id as BID, C.id AS CID, D.ID AS DID, E.ID AS EID
+    ONE ROW PER MATCH
+    AFTER MATCH SKIP TO NEXT ROW
+    PATTERN (A N1*? B N2*? C N3*? D N4*? E) WITHIN INTERVAL '240' MINUTE
+    DEFINE
+        A AS A.type = 'ROBBERY' AND A.district >= 10 AND A.district <= 19,
+        B AS B.type = 'BATTERY',
+        C AS C.type = 'MOTOR_VEHICLE_THEFT',
+        D AS D.type = 'DECEPTIVE_PRACTICE',
+        E AS E.type = 'PROSTITUTION'
+);

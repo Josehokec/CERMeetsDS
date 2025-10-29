@@ -1,5 +1,6 @@
 package compute;
 
+import engine.SelectionStrategy;
 import event.*;
 import filter.OptimizedSWF;
 import filter.SWF;
@@ -15,7 +16,8 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.layered.TFramedTransport;
 import parser.EqualDependentPredicate;
 import parser.QueryParse;
-import plan.CostModel;
+import plan.AdaptiveCostModel;
+import plan.CostEstimator;
 import plan.GeneratedPlan;
 import plan.Plan;
 import request.ReadQueries;
@@ -33,6 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class RunOurs {
+    static double networkBandwidth = 0.1; // Byte/ns
 
     static byte[] orByteArrays(byte[] array1, byte[] array2) {
         int length = Math.min(array1.length, array2.length);
@@ -379,33 +382,13 @@ public class RunOurs {
         SWF swf = null;
 
         Plan plan  = GeneratedPlan.filterPlan(varEventNumMap, query.getHeadVarName(), query.getTailVarName(), query.getDpMap());
-        int l_t;
-        if(Args.isOptimizedSwf){
-            l_t = 20;
-        }else{
-            switch (Args.sfTableMode){
-                case _12_10_10:
-                    l_t = 10;
-                    break;
-                case _8_12_12:
-                    l_t = 12;
-                    break;
-                case _16_8_8:
-                    l_t = 8;
-                    break;
-                default:
-                    throw new RuntimeException("wrong table mode");
-            }
-        }
 
         List<String> steps = plan.getSteps();
         Set<String> hasProcessedVarName = new HashSet<>();
         long slicedBits = -1;
 
         // if you can get a good parameter, we suggest to remove cost model to avoid negative impact
-        long ell_0 = 50_000_000_000L;
-        int dataLen = 40;
-        // CostModel costModel = new CostModel(steps.get(0), l_t, nodeNum, ell_0, dataLen, window, varEventNumMap, ipMap);
+        CostEstimator costEstimator = new AdaptiveCostModel(nodeNum, query, varEventNumMap, schema);
 
         for(String varName : steps){
             if(hasProcessedVarName.isEmpty()){
@@ -458,7 +441,7 @@ public class RunOurs {
 
                 // used for cost model
                 int bfSize = 0;
-
+                double keyNum = 0;
                 boolean hasDP = false;
                 // here we check whether query has equal dependent predicates, and estimate key number
                 for(String hasVisitVarName : hasProcessedVarName){
@@ -471,7 +454,8 @@ public class RunOurs {
                         int filterKeyNum = Args.isOptimizedSwf ? optimizedSWF.getKeyNum() : swf.getKeyNum();
                         // one window
                         double estimateEventNum = (p.getKey() * slicedBits + 0.0) / p.getValue();
-                        bfSize = WindowWiseBF.getEstimatedBitSize(estimateEventNum);
+                        keyNum += estimateEventNum;
+                        bfSize += WindowWiseBF.getEstimatedBitSize(estimateEventNum);
                         int estimateKeyNum;
                         if(equalDPMap.get(key).size() == 1){
                             EqualDependentPredicate edp = new EqualDependentPredicate(equalDPMap.get(key).get(0));
@@ -492,10 +476,11 @@ public class RunOurs {
                 int updatedEventNum = 0;
 
                 long bitCount = Args.isOptimizedSwf ? optimizedSWF.getSliceNum() : swf.getSliceNum();
-                double selectivity = 0.01;      // current we approximately estimate this selectivity
-                boolean startRoundTrip = true;
-                // boolean startRoundTrip = costModel.newRoundTrip(bitCount, query.headTailMarker(varName), varName, swfBuffer.capacity(), bfSize, selectivity);
-                // System.out.println("curName: " + varName + " start new round trip? " + startRoundTrip);
+
+                //boolean startRoundTrip = true;
+                boolean startRoundTrip = costEstimator.newRoundTrip(bitCount, query.headTailMarker(varName),
+                        varName, swfBuffer.capacity(), bfSize, sendDPMap.size(), 8, (int) keyNum, networkBandwidth);
+
                 if(startRoundTrip){
                     if(hasDP){
                         long startTime2 = System.currentTimeMillis();
@@ -673,12 +658,15 @@ public class RunOurs {
             schema = getSchemaByDatasetName(datasetName);
         }
 
+        // strict continuous
+        // List<String> sqlList = ReadQueries.getStrictConQueryList(datasetName);
         List<String> sqlList = ReadQueries.getQueryList(datasetName, false);
         List<String> esperSqlList = ReadQueries.getQueryList(datasetName, true);
 
         // sqlList.size()
         for(int i = 0; i < sqlList.size(); i++) {
             System.out.println("query id: " + i);
+            long queryStart = System.currentTimeMillis();
             String sql = sqlList.get(i);
             // System.out.println(sql);
             long startTime = System.currentTimeMillis();
@@ -689,6 +677,7 @@ public class RunOurs {
 
             System.out.println("pull event time: " + (endTime - startTime) + "ms");
 
+            // EvaluationEngineSase.processQuery(byteRecords, sql, SelectionStrategy.STRICT_CONTIGUOUS);
             switch (ENGINE_ID){
                 case 1:
                     String esperSql = esperSqlList.get(i);
@@ -778,6 +767,8 @@ public class RunOurs {
                 case 3:
                     EvaluationEngineSase.processQuery(byteRecords, sql);
             }
+            long queryEnd = System.currentTimeMillis();
+            System.out.println("this query cost: " + (queryEnd - queryStart) + "ms");
         }
     }
 
@@ -870,7 +861,7 @@ public class RunOurs {
         }
 
         // "CRIMES", "CITIBIKE", "CLUSTER", "SYNTHETIC"
-        String datasetName = "SYNTHETIC";
+        String datasetName = "CRIMES";
         boolean isEsper = false;
         System.out.println("@args #isEsper: " + isEsper + " #dataset: " + datasetName + " #isSaseEngine: " + Args.isSaseEngine);
 

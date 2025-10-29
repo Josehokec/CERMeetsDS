@@ -380,8 +380,9 @@ public class RunPushPull {
         List<String> esperSqlList = ReadQueries.getQueryList(datasetName, true);
 
         // sqlList.size()
-        for(int i = 260; i < sqlList.size(); i++){
+        for(int i = 0; i < sqlList.size(); i++){
             System.out.println("query id: " + i);
+            long queryStart = System.currentTimeMillis();
             String sql = sqlList.get(i);
             // System.out.println(sql);
             long startTime = System.currentTimeMillis();
@@ -434,6 +435,9 @@ public class RunPushPull {
                 case 3:
                     EvaluationEngineSase.processQuery(byteRecords, sql);
             }
+
+            long queryEnd = System.currentTimeMillis();
+            System.out.println("this query cost: " + (queryEnd - queryStart) + "ms");
         }
     }
 
@@ -573,7 +577,7 @@ public class RunPushPull {
 //        System.setOut(new PrintStream(filePath));
 
         // "CRIMES", "CITIBIKE", "CLUSTER", "SYNTHETIC"
-        String datasetName = "SYNTHETIC";
+        String datasetName = "CRIMES";
         boolean isEsper = false;
         System.out.println("@args #isEsper: " + isEsper + " #datasetName: " + datasetName + " #isSaseEngine: " + Args.isSaseEngine);
         LocalDateTime now = LocalDateTime.now();

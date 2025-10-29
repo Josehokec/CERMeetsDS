@@ -1,5 +1,7 @@
 package store;
 
+import parser.QueryParse;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,7 +145,7 @@ public class ByteStore {
         System.out.println("start writing csv file...");
         long startTime = System.currentTimeMillis();
         // please modify this filename...
-        String filename = "synthetic50M_0";
+        String filename = "synthetic50M";
         ByteStore.storeCSVToByte(filename, schema);
         long endTime = System.currentTimeMillis();
         System.out.println("insertion cost " + (endTime - startTime) + "ms");
@@ -153,17 +155,54 @@ public class ByteStore {
     public static void main(String[] args){
         /* initial function, please modify filename in the function */
 
-        //initialCrimes();
-        //initialCitibike();
-        //initialCluster();
-        //initialSynthetic();
+        // initialCrimes();
+        // initialCitibike();
+        // initialCluster();
+        // initialSynthetic();
+
+
+
+//         List<String> ips1 = new ArrayList<>();
+//         ips1.add("V1.BEAT = 1024");
+//         Map<String, List<String>> ipStringMap = new HashMap<>();
+//         ipStringMap.put("V1", ips1);
+
     }
 }
 
 
 
 /*
+
+long startTime = System.currentTimeMillis();
+FullScan fullScan = new FullScan("CRIMES");
+int callNum = 0;
+boolean finish = false;
+List<byte[]> allRecords = new ArrayList<>();
+while(!finish){
+    List<byte[]> records =  fullScan.concurrentScan(callNum);
+    if(records.isEmpty()){
+        finish = true;
+    }else{
+        allRecords.addAll(records);
+        callNum++;
+    }
+}
+System.out.println("total records: " + allRecords.size());
+long endTime = System.currentTimeMillis();
+System.out.println("scan cost " + (endTime - startTime) + "ms");
+EventSchema schema = EventSchema.getEventSchema("CRIMES");
+for(int i = 0; i < 10; i++){
+    byte[] record = allRecords.get(i);
+    String recordStr = schema.getRecordStr(record);
+    System.out.println(recordStr);
+}
+
+
+
+-------------------------------------------------
 Cluster dataset
+-------------------------------------------------
 List<String> ips1 = new ArrayList<>();
 ips1.add("V1.TYPE = 'TP7'");
 Map<String, List<String>> ipStringMap = new HashMap<>();
@@ -178,7 +217,11 @@ System.out.println("query cost " + (endTime - startTime) + "ms");
 System.out.println(cache.getCardinality());
 
 
-Crimes dataset:
+
+
+-------------------------------------------------
+Crimes dataset
+-------------------------------------------------
 List<String> ips1 = new ArrayList<>();
 ips1.add("V1.TYPE = 'ROBBERY'");
 
@@ -203,5 +246,33 @@ EventCache cache = fullScan.concurrentScanBasedVarName(ipStringMap);
 long end = System.currentTimeMillis();
 System.out.println("query cost " + (end - start) + "ms");
 System.out.println(cache.getCardinality());
+
+
+
+
+
+String query = "SELECT * FROM CRIMES MATCH_RECOGNIZE(\n" +
+                "    ORDER BY eventTime\n" +
+                "    MEASURES A.id as AID, B.id as BID, C.id AS CID\n" +
+                "    ONE ROW PER MATCH\n" +
+                "    AFTER MATCH SKIP TO NEXT ROW\n" +
+                "    PATTERN (A N1*? B N2*? C) WITHIN INTERVAL '30' MINUTE\n" +
+                "    DEFINE\n" +
+                "        A AS A.type = 'ROBBERY',\n" +
+                "        B AS B.type = A.type,\n" +
+                "        C AS C.type = 'MOTOR_VEHICLE_THEFT' AND C.beat >= 1611 AND C.beat <= 2211\n" +
+                ");";
+        QueryParse q = new QueryParse(query);
+        Map<String, List<String>> ipStringMap = q.getIpStringMap();
+        System.out.println(ipStringMap);
+
+
+                 FullScan fullScan = new FullScan("CRIMES");
+
+         long start = System.currentTimeMillis();
+         EventCache cache = fullScan.concurrentScanBasedVarName(ipStringMap);
+         long end = System.currentTimeMillis();
+         System.out.println("query cost " + (end - start) + "ms");
+         System.out.println(cache.getCardinality());
  */
 

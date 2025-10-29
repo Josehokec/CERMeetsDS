@@ -45,6 +45,12 @@ public class ReadQueries {
         }
     }
 
+    public static List<String> getStrictConQueryList(String datasetName){
+        String filePath = System.getProperty("user.dir") + sep + "src"
+                + sep + "main" + sep + "java" + sep + "request" + sep + datasetName.toLowerCase() + "_query_strict_contiguous.txt";
+        return readQueries(filePath);
+    }
+
     public static List<String> getCrimesQueryList(){
         String filePath = System.getProperty("user.dir") + sep + "src"
                 + sep + "main" + sep + "java" + sep + "request" + sep + "crimes_query.txt";
