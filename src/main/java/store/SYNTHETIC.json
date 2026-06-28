@@ -1,0 +1,1 @@
+{"columnNames":["TYPE","A1","A2","A3","EVENTTIME"],"dataLengths":[4,4,8,16,8],"dataTypes":["VARCHAR","INT","VARCHAR","VARCHAR","LONG"],"fixedRecordLen":40,"tableName":"SYNTHETIC"}

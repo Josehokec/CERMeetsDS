@@ -1,0 +1,142 @@
+Query 1
+[remote] string length: 4268756 send cost: 1978ms
+[remote] Rows Returned: 6434
+[remote] Execution Time: 6737 ms
+number of tuples: 6434
+match time: 7996ms
+
+Query 2
+[remote] string length: 4268756 send cost: 408ms
+[remote] Rows Returned: 6434
+[remote] Execution Time: 2280 ms
+number of tuples: 6434
+match time: 2539ms
+
+Query 3
+[remote] string length: 4268756 send cost: 329ms
+[remote] Rows Returned: 6434
+[remote] Execution Time: 2181 ms
+number of tuples: 6434
+match time: 2272ms
+
+Query 3
+[remote] string length: 4268756 send cost: 303ms
+[remote] Rows Returned: 6434
+[remote] Execution Time: 2410 ms
+number of tuples: 6434
+match time: 1929ms
+
+
+[remote] string length: 4268756 send cost: 272ms
+number of tuples: 6434
+match time: 2159ms
+match cost: 2167ms
+
+
+前面5条预热的
+[remote] string length: 4268756 send cost: 286ms
+number of tuples: 6434
+match time: 1804ms
+match cost: 1813ms
+
+
+
+[remote] string length: 4268756 send cost: 322ms
+number of tuples: 6434
+match time: 1790ms
+match cost: 1798ms
+
+[remote] string length: 4268756 send cost: 323ms
+number of tuples: 6434
+match time: 1979ms
+match cost: 1988ms
+
+[remote] string length: 4268756 send cost: 248ms
+number of tuples: 6434
+match time: 1905ms
+match cost: 1926ms
+
+[remote] string length: 4268756 send cost: 319ms
+number of tuples: 6434
+match time: 1912ms
+match cost: 1920ms
+[remote] string length: 4268756 send cost: 320ms
+number of tuples: 6434
+match time: 1855ms
+match cost: 1863ms
+[remote] string length: 4268756 send cost: 273ms
+number of tuples: 6434
+match time: 1808ms
+match cost: 1816ms
+[remote] string length: 4268756 send cost: 298ms
+number of tuples: 6434
+match time: 2039ms
+match cost: 2048ms
+[remote] string length: 4268756 send cost: 277ms
+number of tuples: 6434
+match time: 1879ms
+match cost: 1887ms
+[remote] string length: 4268756 send cost: 237ms
+number of tuples: 6434
+match time: 1868ms
+match cost: 1876ms
+[remote] string length: 4268756 send cost: 276ms
+number of tuples: 6434
+match time: 1780ms
+match cost: 1788ms
+[remote] string length: 4268756 send cost: 279ms
+number of tuples: 6434
+match time: 1951ms
+match cost: 1959ms
+[remote] string length: 4268756 send cost: 278ms
+number of tuples: 6434
+match time: 1843ms
+match cost: 1851ms
+[remote] string length: 4268756 send cost: 250ms
+number of tuples: 6434
+match time: 1768ms
+match cost: 1776ms
+[remote] string length: 4268756 send cost: 292ms
+number of tuples: 6434
+match time: 1827ms
+match cost: 1836ms
+[remote] string length: 4268756 send cost: 267ms
+number of tuples: 6434
+match time: 1874ms
+match cost: 1882ms
+[remote] string length: 4268756 send cost: 391ms
+number of tuples: 6434
+match time: 1781ms
+match cost: 1789ms
+[remote] string length: 4268756 send cost: 284ms
+number of tuples: 6434
+match time: 1776ms
+match cost: 1800ms
+[remote] string length: 4268756 send cost: 307ms
+number of tuples: 6434
+match time: 2071ms
+match cost: 2079ms
+[remote] string length: 4268756 send cost: 240ms
+number of tuples: 6434
+match time: 1900ms
+match cost: 1908ms
+[remote] string length: 4268756 send cost: 255ms
+number of tuples: 6434
+match time: 2071ms
+match cost: 2079ms
+[remote] string length: 4268756 send cost: 286ms
+number of tuples: 6434
+match time: 1766ms
+match cost: 1775ms
+[remote] string length: 4268756 send cost: 282ms
+number of tuples: 6434
+match time: 1842ms
+match cost: 1850ms
+[remote] string length: 4268756 send cost: 297ms
+number of tuples: 6434
+match time: 1969ms
+match cost: 1980ms
+[remote] string length: 4268756 send cost: 317ms
+number of tuples: 6434
+match time: 1865ms
+match cost: 1873ms

@@ -1,0 +1,104 @@
+
+
+
+package rpc;
+
+import compute.Args;
+import org.apache.thrift.TException;
+import rpc.iface.DataChunk;
+import rpc.iface.PushDownRPC;
+import store.FullScan;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class PushDownRPCImpl implements PushDownRPC.Iface {
+    // 全局查询计数（线程安全）
+    public static final AtomicInteger queryId = new AtomicInteger(0);
+
+    // 每个客户端/会话的状态存储
+    private final ConcurrentHashMap<String, ClientState> sessions = new ConcurrentHashMap<>();
+
+    // 会话状态类，保存每个客户端的局部状态
+    private static class ClientState {
+        List<byte[]> filteredRecords;
+        int chunkId;
+        int recordSize;
+        int MAX_RECORD_NUM;
+
+        ClientState() {
+            this.filteredRecords = new ArrayList<>();
+            this.chunkId = 0;
+            this.recordSize = 0;
+            this.MAX_RECORD_NUM = 0;
+        }
+    }
+
+    /**
+     * 注意：需要在 Thrift IDL 中把 pullEvents 改为第一个参数为 string clientId
+     * public DataChunk pullEvents(1: string clientId, 2: string tableName, 3: i32 offset, 4: map<string, list<string>> ipMap)
+     */
+    @Override
+    public DataChunk pullEvents(String clientId, String tableName, int offset, Map<String, List<String>> ipMap) throws TException {
+        // 获取或初始化会话状态
+        ClientState state = sessions.computeIfAbsent(clientId, k -> new ClientState());
+
+        // 初始化或第一次读取数据（offset==0 表示新查询）
+        if (offset == 0) {
+            System.out.println(queryId.getAndIncrement() + "-th query arrives for client: " + clientId);
+            state.chunkId = 0;
+
+            long startRead = System.currentTimeMillis();
+            FullScan fullscan = new FullScan(tableName);
+            state.filteredRecords = fullscan.concurrentScan(ipMap); // 返回 List<byte[]>
+            long endRead = System.currentTimeMillis();
+            System.out.println("read cost: " + (endRead - startRead) + "ms");
+
+            if (state.filteredRecords.isEmpty()) {
+                // 如果没有记录，设置记录大小为0，直接返回空的最后一个 chunk 并清理会话
+                state.recordSize = 0;
+                state.MAX_RECORD_NUM = 0;
+                sessions.remove(clientId);
+                ByteBuffer empty = ByteBuffer.allocate(0);
+                return new DataChunk(0, empty, true);
+            } else {
+                state.recordSize = state.filteredRecords.get(0).length;
+                state.MAX_RECORD_NUM = Args.MAX_CHUNK_SIZE / state.recordSize;
+                if (state.MAX_RECORD_NUM <= 0) {
+                    // 防止除0或异常情况
+                    state.MAX_RECORD_NUM = 1;
+                }
+            }
+        }
+
+        int remaining = state.filteredRecords.size() - offset;
+        DataChunk dataChunk;
+        if (remaining <= state.MAX_RECORD_NUM) {
+            // 最后一个 chunk
+            ByteBuffer buffer = ByteBuffer.allocate(Math.max(0, remaining * state.recordSize));
+            for (int i = offset; i < state.filteredRecords.size(); i++) {
+                buffer.put(state.filteredRecords.get(i));
+            }
+            buffer.flip();
+            dataChunk = new DataChunk(state.chunkId, buffer, true);
+
+            // 清理会话状态（该会话的传输已完成）
+            sessions.remove(clientId);
+        } else {
+            // 非最后 chunk
+            ByteBuffer buffer = ByteBuffer.allocate(state.MAX_RECORD_NUM * state.recordSize);
+            for (int i = offset; i < offset + state.MAX_RECORD_NUM; i++) {
+                buffer.put(state.filteredRecords.get(i));
+            }
+            buffer.flip();
+            dataChunk = new DataChunk(state.chunkId++, buffer, false);
+            // 保持会话，等待下次 pull
+        }
+
+        return dataChunk;
+    }
+}
