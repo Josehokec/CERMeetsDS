@@ -5,7 +5,7 @@
 The preliminary version of this paper (titled "When Complex Event Recognition Meets Cloud-Native Architectures") has been accepted in the Proceedings of the 42nd IEEE International Conference on Data Engineering, 2026 (acceptance rate: 22.2%). 
 The previous conference version aims to push computation down to storage nodes to filter irrelevant events and accelerate complex event recognition (CER) in cloud-native architectures. 
 
-This journal version extends the conference version by introducing an additional cache layer on compute nodes, which works together with computation pushdown to further improve the query performance of CER in cloud-native architectures.
+Our new journal version extends the conference version by introducing an additional cache layer on compute nodes, which works together with computation pushdown to further improve the query performance of CER in cloud-native architectures.
 
 Source code can refer to: https://github.com/Josehokec/CERMeetsDS/tree/cache-pushdown
 
